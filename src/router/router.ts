@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import swaggerUi, { JsonObject } from "swagger-ui-express"
 import { Router, Request, Response, NextFunction } from "express"
-import { Method, Aplication, Param, HttpStatusCode } from "./router.types"
-import { swaggerDefinitions } from './swagger.definitions'
+import { Method, Aplication, Param, HttpStatusCode } from "./RouterTypes"
+import { swaggerDefinitions } from './SwaggerDefinitions'
 import { ObjectSchema } from 'joi'
 import { ServiceError } from '../utils/errors/service.error'
 import ui from "uniqid";
@@ -185,8 +185,8 @@ class RouterDesc {
         });
         if (typeof schemeObject == "string") {
             this.#swaggerDocument.definitions[_schemeName] = { type: schemeObject }
-        }else{
-            this.#validators.push({name: schemaName, from, validator: schemeObject});
+        } else {
+            this.#validators.push({ name: schemaName, from, validator: schemeObject });
             const properties: ParameterDefinition = {};
             Object.entries(schemeObject.describe().keys).forEach(([k, v]) => {
                 properties[k] = { type: (v as any).type }
@@ -264,9 +264,9 @@ class RouterDesc {
 const validatorMiddleware = (validators: ValidatorParameterType[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await Promise.all(validators.map((v)=>{
+            await Promise.all(validators.map((v) => {
                 let data;
-                switch(v.from){
+                switch (v.from) {
                     case Param.header:
                         data = req.get(v.name); break;
                     case Param.body:
@@ -276,8 +276,8 @@ const validatorMiddleware = (validators: ValidatorParameterType[]) => {
                     case Param.query:
                         data = req.query[v.name]; break;
                 }
-                if(!data) throw new ServiceError(`No existe '${v.name}' en el '${v.from}'.`)
-                return v.validator.validateAsync(data, {abortEarly: false});
+                if (!data) throw new ServiceError(`No existe '${v.name}' en el '${v.from}'.`)
+                return v.validator.validateAsync(data, { abortEarly: false });
             }));
             next();
         } catch (error) {
@@ -379,7 +379,7 @@ export function Middleware(middleware: ExpressMiddlewareType): DecoratorFunction
 export function Middleware(middlewares: ExpressMiddlewareType[]): DecoratorFunctionMethod
 export function Middleware(middlewares: any): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        if(Array.isArray(middlewares))
+        if (Array.isArray(middlewares))
             _router.addMiddlewares(middlewares);
         else
             _router.addMiddlewares([middlewares]);
@@ -390,7 +390,7 @@ export function GlobalMiddleware(middleware: ExpressMiddlewareType): DecoratorFu
 export function GlobalMiddleware(middlewares: ExpressMiddlewareType[]): DecoratorFunctionMethod
 export function GlobalMiddleware(middlewares: any) {
     return function (constructor: ClassConstructor) {
-        if(Array.isArray(middlewares))
+        if (Array.isArray(middlewares))
             _router.addMiddlewares(middlewares);
         else
             _router.addMiddlewares([middlewares]);

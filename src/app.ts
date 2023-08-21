@@ -1,10 +1,10 @@
 import express, { Application, Router } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { Responses } from './middlewares/response.middleware';
+import { Responses } from './middlewares/ResponseMiddleware';
 import http from 'http';
 import { Database } from './database/database';
-import { ErrorMiddleware } from './middlewares/error.middleware';
+import { ErrorMiddleware } from './middlewares/ErrorMiddleware';
 
 export default class App {
     readonly app: Application
@@ -19,7 +19,7 @@ export default class App {
         private readonly Router: Router,
         private readonly database: Database
     ) {
-        
+
         this.#http_port = parseInt(process.env.API_HTTP_PORT ?? '3000');
         this.#host = process.env.API_HOST;
 

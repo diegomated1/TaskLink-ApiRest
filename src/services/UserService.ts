@@ -1,7 +1,7 @@
 import { UserModel } from '../models/UserModel';
 import { v4 as uuid } from 'uuid';
 import { ServiceError } from '../utils/errors/service.error';
-import { HttpStatusCode } from '../router/router.types';
+import { HttpStatusCode } from '../router/RouterTypes';
 import bc from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from 'interfaces/User';

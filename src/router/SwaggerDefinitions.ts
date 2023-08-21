@@ -6,5 +6,5 @@ export const swaggerDefinitions: JsonObject = {
     title: 'PROYECTO INTEGRADOR 3',
     version: '1.0.0',
   },
-  security: [ { bearerAuth: [] } ],
+  security: [{ bearerAuth: [] }],
 }

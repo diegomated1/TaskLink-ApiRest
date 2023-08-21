@@ -29,7 +29,7 @@ export enum Method {
     delete = "delete"
 }
 
-export enum Aplication{
+export enum Aplication {
     json = "application/json",
     xml = "application/xml"
 }

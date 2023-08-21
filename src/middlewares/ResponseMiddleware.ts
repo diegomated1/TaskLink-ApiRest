@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "../router/router.types";
+import { HttpStatusCode } from "../router/RouterTypes";
 import { Request, Response, NextFunction } from "express";
 
 export type GlobalResponse<T> = {
@@ -8,27 +8,27 @@ export type GlobalResponse<T> = {
 }
 
 export type OkMessageResponse = <T>(
-    value?:T, 
-    httpStatusCode?:HttpStatusCode
-    )=>void
+    value?: T,
+    httpStatusCode?: HttpStatusCode
+) => void
 
 export type NotFoundMessageResponse = <T>(
     errors?: string[] | string
-    )=>void
+) => void
 
 export type FailedMessageResponse = <T>(
     errors?: string[] | string,
     httpStatusCode?: HttpStatusCode
-    )=>void
+) => void
 
 export type ErrorMessageResponse = <T>(
     errors?: string[] | string,
     httpStatusCode?: HttpStatusCode
-    )=>void
+) => void
 
 
-declare global{
-    namespace Express{
+declare global {
+    namespace Express {
         interface Response {
             Ok: OkMessageResponse
             Failed: FailedMessageResponse
@@ -39,7 +39,7 @@ declare global{
 }
 
 export function Responses(request: Request, response: Response, nextFunction: NextFunction) {
-        
+
     response.Ok = <T>(value: T, httpStatusCode = HttpStatusCode.OK) => {
         const res: GlobalResponse<T> = {
             value,

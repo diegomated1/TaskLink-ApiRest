@@ -1,11 +1,12 @@
 import dotenv from 'dotenv';
-import path from 'path';
 dotenv.config();
 
 import { Database } from './database/database';
-import fs from 'fs';
 import router from './router/router';
 import App from './app';
+import { UserController } from './controllers/UserController';
+import { UserModel } from './models/UserModel';
+import { UserService } from './services/UserService';
 
 function main(): App {
 
@@ -15,6 +16,13 @@ function main(): App {
 
     const database = new Database(conectionString);
     database.connect();
+
+    // User
+    const userModel = new UserModel(database);
+    const userService = new UserService(userModel);
+    new UserController(userService);
+
+    router.addService(userService);
 
     const app = new App(router.Router(), database);
     app.start();

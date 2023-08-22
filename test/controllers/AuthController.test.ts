@@ -21,12 +21,25 @@ describe("POST /sesion", () => {
             errors: [],
             success: true,
             value: {
-                User: {} as User,
+                User: {
+                    id: "1dde026b-8b82-49b9-a9ed-1ed2d7208e86",
+                    identification: "9647637690636009",
+                    identification_type_id: 1,
+                    fullname: "Diego Cardenas",
+                    email: "god@gmail.com",
+                    email_verified: false,
+                    registration_date: expect.any(String),
+                    avatar_url: null,
+                    phone: "573173887502",
+                    birthdate: "2002-10-15T05:00:00.000Z",
+                    password: "$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm",
+                    role_id: 1
+                },
                 token: expect.any(String),
             }
         }
 
-        const response = await request(app.app).post("/sesion").send(body);
+        const response = await request(app.app).post("/auth/sesion").send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(200);
     });
@@ -45,7 +58,7 @@ describe("POST /sesion", () => {
             value: null
         }
 
-        const response = await request(app.app).post("/sesion").send(body);
+        const response = await request(app.app).post("/auth/sesion").send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     });
@@ -64,7 +77,7 @@ describe("POST /sesion", () => {
             value: null
         }
 
-        const response = await request(app.app).post("/sesion").send(body);
+        const response = await request(app.app).post("/auth/sesion").send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     });

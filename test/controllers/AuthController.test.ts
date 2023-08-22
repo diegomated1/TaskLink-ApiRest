@@ -40,7 +40,7 @@ describe("POST /sesion", () => {
             }
         }
 
-        const response = await request(app.app).post("/sesion").send(body);
+        const response = await request(app.app).post("/auth/sesion").send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(200);
     });
@@ -59,7 +59,7 @@ describe("POST /sesion", () => {
             value: null
         }
 
-        const response = await request(app.app).post("/sesion").send(body);
+        const response = await request(app.app).post("/auth/sesion").send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     });
@@ -78,7 +78,7 @@ describe("POST /sesion", () => {
             value: null
         }
 
-        const response = await request(app.app).post("/sesion").send(body);
+        const response = await request(app.app).post("/auth/sesion").send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     });

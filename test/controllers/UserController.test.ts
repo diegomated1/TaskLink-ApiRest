@@ -3,6 +3,7 @@ import { User } from '../../src/interfaces/User';
 import { GlobalResponse } from "../../src/middlewares/ResponseMiddleware"
 import app from "../../src/index"
 import bc from "bcrypt";
+import jwt from "jsonwebtoken";
 
 afterAll((done) => {
     app.close();
@@ -156,7 +157,7 @@ describe("POST /user", () => {
         expect(response.statusCode).toBe(400);
     });
 
-})
+});
 
 describe("PUT /user", () => {
 
@@ -241,4 +242,113 @@ describe("PUT /user", () => {
         expect(response.statusCode).toBe(401);
     })
 
-})
+});
+
+describe("POST /user/forgot-password", ()=>{
+
+    test("GOD DATA", async () => {
+        
+        let body: Partial<User> = {
+            identification: "9647637690636009",
+            email: "god@gmail.com"
+        };
+
+        var expectedResponse: GlobalResponse<null> = {
+            value: null,
+            errors: [],
+            success: true
+        }
+
+        const response = await request(app.app).post("/user/forgot-password").send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(200);
+    });
+
+    test("WRONG EMAIL OR IDENTIFICATION", async () => {
+
+        let body: Partial<User> = {
+            identification: "9647637690636005",
+            email: "god1@gmail.com"
+        };
+
+        var expectedResponse: GlobalResponse<null> = {
+            value: null,
+            errors: [
+                "El email o la identificacion no son correctos."
+            ],
+            success: false
+        }
+
+        const response = await request(app.app).post("/user/forgot-password").send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(400);
+    });
+
+});
+
+describe("POST /user/reset-password", ()=>{
+
+    test("GOD DATA", async () => {
+        
+        const token = jwt.sign({
+            id_user: "1dde026b-8b82-49b9-a9ed-1ed2d7208e86"
+        }, process.env.JWT_SECRET!);
+
+        const body = {
+            newPassword: "elPepe123@"
+        }
+
+        const expectedResponse: GlobalResponse<null> = {
+            value: null,
+            errors: [],
+            success: true
+        }
+
+        const response = await request(app.app).patch(`/user/reset-password/?token=${token}`).send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(200);
+    });
+
+    test("WRONG TOKEN", async () => {
+
+        const body = {
+            newPassword: "12345"
+        }
+
+        const expectedResponse: GlobalResponse<null> = {
+            value: null,
+            errors: [
+                "Token invalido."
+            ],
+            success: false
+        }
+
+        const response = await request(app.app).patch(`/user/reset-password/?token=123`).send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(400);
+    });
+
+    test("WRONG PASSWORD", async () => {
+        
+        const token = jwt.sign({
+            id_user: "1dde026b-8b82-49b9-a9ed-1ed2d7208e86"
+        }, process.env.JWT_SECRET!);
+
+        const body = {
+            newPassword: "12345"
+        }
+
+        const expectedResponse: GlobalResponse<null> = {
+            value: null,
+            errors: [
+                "La contraseña no es segura."
+            ],
+            success: false
+        }
+
+        const response = await request(app.app).patch(`/user/reset-password/?token=${token}`).send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(400);
+    });
+
+});

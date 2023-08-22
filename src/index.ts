@@ -7,6 +7,8 @@ import App from './app';
 import { UserController } from './controllers/UserController';
 import { UserModel } from './models/UserModel';
 import { UserService } from './services/UserService';
+import { AuthService } from './services/AuthService';
+import { AuthController } from './controllers/AuthController';
 
 function main(): App {
 
@@ -22,7 +24,12 @@ function main(): App {
     const userService = new UserService(userModel);
     new UserController(userService);
 
+    // Auth
+    const authService = new AuthService(userModel);
+    new AuthController(authService);
+
     router.addService(userService);
+    router.addService(authService);
 
     const app = new App(router.Router(), database);
     app.start();

@@ -3,6 +3,7 @@ import { User } from '../../src/interfaces/User';
 import { GlobalResponse } from "../../src/middlewares/ResponseMiddleware"
 import app from "../../src/index"
 import bc from "bcrypt";
+import '@types/jest';
 
 afterAll((done) => {
     app.close();

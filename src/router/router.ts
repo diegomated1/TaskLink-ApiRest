@@ -290,6 +290,7 @@ const validatorMiddleware = (validators: ValidatorParameterType[]) => {
 var _router = new RouterDesc();
 
 export function Controller(): DecoratorClass
+export function Controller(controller?: string, description?: string): DecoratorClass
 export function Controller(controller?: string, description?: string) {
     return function (constructor: ClassConstructor) {
         _router.addController(controller || constructor.name.toLowerCase().replace("controller", ""), constructor);

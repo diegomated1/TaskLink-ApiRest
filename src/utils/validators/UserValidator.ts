@@ -2,7 +2,7 @@ import { User } from 'interfaces/User';
 import joi from 'joi';
 
 export const UserPostValidator = joi.object<User>({
-    identification_type_id: joi.number()
+    identificationTypeId: joi.number()
         .required()
         .messages({
             "any.required": "El tipo de documento es requerido."

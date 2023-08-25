@@ -19,11 +19,15 @@ export default class App {
         private readonly Router: Router,
         private readonly database: Database
     ) {
-
-        this.#http_port = parseInt(process.env.API_HTTP_PORT ?? '3000');
+        this.#ENVIORENT = process.env.ENVIORENT ?? 'development';
+        
+        if(this.#ENVIORENT == "test"){
+            this.#http_port = 0;
+        }else{
+            this.#http_port = parseInt(process.env.API_HTTP_PORT ?? '3000');
+        }
         this.#host = process.env.API_HOST;
 
-        this.#ENVIORENT = process.env.ENVIORENT ?? 'development';
         this.app = express()
         this.#config()
         this.#routes()

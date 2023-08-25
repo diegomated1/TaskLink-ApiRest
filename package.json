@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsc && nodemon build/index",
     "start": "tsc && node build/index",
-    "test": "jest"
+    "test": "jest --forceExit"
   },
   "keywords": [],
   "author": "",

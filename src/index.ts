@@ -14,7 +14,7 @@ function main(): App {
 
     // Database
     const enviorement = process.env.enviorement ?? "development";
-    const conectionString = enviorement === "production" ? process.env.POSTGRES_CONECTIONSTRING! : process.env.POSTGRES_CONECTIONSTRING_DEBUG!;
+    const conectionString = enviorement === "production" ? process.env.POSTGRES_CONECTIONSTRING! : process.env.POSTGRES_CONECTIONSTRING_DEV!;
 
     const database = new Database(conectionString);
     database.connect();

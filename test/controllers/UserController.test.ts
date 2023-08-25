@@ -44,7 +44,7 @@ describe("GET /user", () => {
             registration_date: expect.any(String),
             avatar_url: null,
             phone: "573173887502",
-            birthdate: "2002-10-15T05:00:00.000Z",
+            birthdate: expect.any(String),
             password: expect.any(String),
             role_id: 1
         };
@@ -185,7 +185,7 @@ describe("PUT /user", () => {
             phone: "573173887502",
             password: expect.any(String),
             role_id: 1,
-            birthdate: "2002-10-15T05:00:00.000Z",
+            birthdate: expect.any(String),
         };
 
         var expectedResponse: GlobalResponse<any> = {

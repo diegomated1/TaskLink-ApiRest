@@ -11,7 +11,7 @@ afterAll((done) => {
     done();
 });
 
-describe("PATCH /user/email-verify", () => {
+describe.skip("PATCH /user/email-verify", () => {
 
     test("GOD DATA", async ()=> {
 

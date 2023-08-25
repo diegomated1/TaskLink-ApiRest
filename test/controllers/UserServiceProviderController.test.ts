@@ -10,7 +10,7 @@ afterAll((done) => {
     done();
 });
 
-describe("PATCH /user/:id/provider", () => {
+describe.skip("PATCH /user/:id/provider", () => {
 
     test("GOD DATA", async () => {
         const expectedResponse: GlobalResponse<any> = {

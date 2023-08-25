@@ -114,6 +114,8 @@ describe("POST /user", () => {
         expect(response.statusCode).toBe(200);
     });
 
+    
+
     test("WRONG DATA", async () => {
         let User: Partial<User> = {
             fullname: "Diego Cardenas",

@@ -1,14 +1,14 @@
 export interface User {
   id: string;
-  identificationTypeId: number;
+  identification_type_id: number;
   identification: string;
   fullname: string;
   email: string;
-  emailVerified: boolean;
+  email_verified: boolean;
   registration_date: Date;
-  avatarUrl: string | null;
+  avatar_url: string | null;
   phone: string;
   birthdate: string;
   password: string;
-  roleId: number;
+  role_id: number;
 }

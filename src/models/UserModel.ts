@@ -15,7 +15,7 @@ export class UserModel {
     getById = (id: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {
             try {
-                const query = 'SELECT * FROM dbo.User WHERE id = $1';
+                const query = 'SELECT * FROM dbo."User" WHERE id = $1';
                 const values = [id];
                 const result = await this.client.query<User>(query, values);
                 const user = result.rows[0];
@@ -29,7 +29,7 @@ export class UserModel {
     getByEmail = (email: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {
             try {
-                const query = 'SELECT * FROM dbo.User WHERE email = $1';
+                const query = 'SELECT * FROM dbo."User" WHERE email = $1';
                 const values = [email];
                 const result = await this.client.query<User>(query, values);
                 const user = result.rows[0];
@@ -43,7 +43,7 @@ export class UserModel {
     getByIdentification = (cc: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {
             try {
-                const query = 'SELECT * FROM dbo.User WHERE identification = $1';
+                const query = 'SELECT * FROM dbo."User" WHERE identification = $1';
                 const values = [cc];
                 const result = await this.client.query<User>(query, values);
                 const user = result.rows[0];
@@ -57,7 +57,7 @@ export class UserModel {
     getAll = (): Promise<User[]> => {
         return new Promise(async (res, rej) => {
             try {
-                const query = 'SELECT * FROM dbo.User';
+                const query = 'SELECT * FROM dbo."User"';
                 const result = await this.client.query<User>(query);
                 const user = result.rows;
                 res(user || []);
@@ -74,7 +74,7 @@ export class UserModel {
                 const placeholders = Object.entries(user).map((_, i) => `$${i + 1}`).join(', ');
                 const values = Object.values(user);
 
-                const query = `INSERT INTO dbo.User (${columns}) VALUES (${placeholders}) RETURNING *`;
+                const query = `INSERT INTO dbo."User" (${columns}) VALUES (${placeholders}) RETURNING *`;
                 const result = await this.client.query<User>(query, values);
                 const _user = result.rows[0];
                 res(_user);
@@ -91,7 +91,7 @@ export class UserModel {
                     .map(([key, value], i) => `"${key}" = $${i + 1}`)
                     .join(', ');
 
-                const query = `UPDATE dbo.User SET ${updateClauses} WHERE dbo.User.Id = $${Object.keys(entity).length + 1} RETURNING *`;
+                const query = `UPDATE dbo."User" SET ${updateClauses} WHERE dbo."User".Id = $${Object.keys(entity).length + 1} RETURNING *`;
 
                 const values = [...Object.values(entity), userId];
 

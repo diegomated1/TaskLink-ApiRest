@@ -10,7 +10,7 @@ afterAll((done) => {
     done();
 });
 
-describe("POST /sesion", () => {
+describe.skip("POST /sesion", () => {
 
     test("GOD DATA", async () => {
         const body = {

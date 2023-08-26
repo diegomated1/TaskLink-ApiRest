@@ -74,3 +74,33 @@ describe('PATCH /service-request/:id', () => {
     });
 
 });
+
+
+describe('GET /service-requests', () => {
+    test('List Service Requests', async () => {
+        const expectedResponse = {
+            value: [
+                {
+                    id: 'Aun no hay ID en la base de datos',
+                    serviceCategory: 'Home', 
+                    clientName: 'Larry Davis', 
+                    serviceValue: 150.0, 
+                    chatIcon: 'chat-icon.png',
+                    userLocation: '1.5 km',
+                },
+            ],
+            errors: [],
+            success: true,
+        };
+
+        const response = await request(app.app).get('/service-requests');
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(200);
+    });
+});
+
+
+
+
+
+

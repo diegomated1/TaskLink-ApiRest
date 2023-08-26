@@ -87,6 +87,7 @@ describe('GET /service-requests', () => {
                     serviceValue: 150.0, 
                     chatIcon: 'chat-icon.png',
                     userLocation: '1.5 km',
+                    date: '21-03-2023',
                 },
             ],
             errors: [],
@@ -99,7 +100,59 @@ describe('GET /service-requests', () => {
     });
 });
 
+describe('PATCH /service-request/:id/adjust-price', () => {
+    test('Increase Price', async () => {
+        const requestId = 'Aun no hay ID en la base de datos';
+        const body = {
+            newPrice: 160.0
+        }
 
+        const expectedResponse = {
+            value: null,
+            errors: [],
+            success: true,
+        };
+
+        const response = await request(app.app).patch(`/service-request/${requestId}/adjust-price`).send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('Decrease Price', async () => {
+        const requestId = 'Aun no hay ID en la base de datos';
+        const body = {
+            newPrice: 160.0
+        }
+
+        const expectedResponse = {
+            value: null,
+            errors: [],
+            success: true,
+        };
+
+        const response = await request(app.app).patch(`/service-request/${requestId}/adjust-price`).send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('Invalid Request ID', async () => {
+        const invalidRequestId = 'Aun no hay ID en la base de datos';
+
+        const body = {
+            newPrice: 160.0
+        }
+        const expectedResponse = {
+            value: null,
+            errors: ['ID de solicitud no válido.'],
+            success: false,
+        };
+
+        const response = await request(app.app).patch(`/service-request/${invalidRequestId}/adjust-price`).send(body);
+        expect(response.body).toEqual(expectedResponse);
+        expect(response.statusCode).toBe(400);
+    });
+
+});
 
 
 

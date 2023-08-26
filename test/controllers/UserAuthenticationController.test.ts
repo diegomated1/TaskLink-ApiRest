@@ -78,6 +78,47 @@ describe.skip("PATCH /user/email-verify", () => {
     })
 
 
+    describe('POST /user/verify-document', () => {
+
+        test('Scan Document and Verify Registration Data', async () => {
+            const scanResult = {
+                isValid: true,
+                verifiedData: {
+                    name: 'Larry Davis',
+                    identification: '9647637690636009',
+                },
+            };
+    
+            const expectedResponse = {
+                value: scanResult,
+                errors: [],
+                success: true,
+            };
+    
+            const response = await request(app.app).post('/register/verify-document').send(scanResult);
+            expect(response.body).toEqual(expectedResponse);
+            expect(response.statusCode).toBe(200);
+        });
+    
+        test('Invalid Scanned Document', async () => {
+            const scanResult = {
+                isValid: false,
+                verifiedData: {},
+            };
+    
+            const expectedResponse = {
+                value: scanResult,
+                errors: ['Documento escaneado no válido.'],
+                success: false,
+            };
+    
+            const response = await request(app.app).post('/register/verify-document').send(scanResult);
+            expect(response.body).toEqual(expectedResponse);
+            expect(response.statusCode).toBe(400);
+        });
+    
+
+    });
 })
 
 

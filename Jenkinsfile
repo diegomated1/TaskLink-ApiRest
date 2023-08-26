@@ -17,7 +17,6 @@ pipeline {
                 sh 'npm test'
             }
         }
-        /*
         stage('Merge') {
             steps {
                 echo "Testing.."
@@ -39,7 +38,7 @@ pipeline {
                 }
                 echo "Building.."
                 script {
-                    def customImage = docker.build("diegomated1/p1test:${env.BUILD_ID}")
+                    def customImage = docker.build("diegomated1/TaskLinkApiRest:${env.BUILD_ID}")
                     customImage.push()
                 }
             }
@@ -48,15 +47,15 @@ pipeline {
             steps {
                 echo 'Deploy....'
                 sshagent(credentials : ['SSH_MAIN_MACHINE']) {
-                    sh "ssh -o StrictHostKeyChecking=no jenkins@192.168.56.21 uptime"
+                    sh "ssh -o StrictHostKeyChecking=no tasklink-admin@tasklink.bucaramanga.upb.edu.co uptime"
                     sh """
-                        ssh -v jenkins@192.168.56.21 \
-                        docker stop api && \
-                        docker rm api && \
-                        docker run --name api -p 0.0.0.0:${env.API_PORT}:${env.API_PORT} --env API_PORT=${env.API_PORT} --restart=always -d diegomated1/p1test:${env.BUILD_ID}
+                        ssh -v tasklink-admin@tasklink.bucaramanga.upb.edu.co \
+                        docker stop TaskLinkApiRest && \
+                        docker rm TaskLinkApiRest && \
+                        docker run --name TaskLinkApiRest -p 0.0.0.0:${env.API_HTTP_PORT}:${env.API_HTTP_PORT} --env ENVIORENT="production" --env API_HTTP_PORT=${env.API_HTTP_PORT} --env JWT_SECRET=${env.JWT_SECRET} --env POSTGRES_CONECTIONSTRING=${env.POSTGRES_CONECTIONSTRING} --restart=always -d diegomated1/TaskLinkApiRest:${env.BUILD_ID}
                     """
                 }
             }
-        } */
+        }
     }
 }

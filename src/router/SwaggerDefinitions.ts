@@ -6,5 +6,20 @@ export const swaggerDefinitions: JsonObject = {
     title: 'PROYECTO INTEGRADOR 3',
     version: '1.0.0',
   },
-  security: [{ bearerAuth: [] }],
+  servers: [
+    {
+      url: "http://tasklink.bucaramanga.upb.edu.co"
+    }
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        description: "JWT Authorization",
+        type: "http",
+        scheme: "bearer",
+        in: "header",
+        bearerFormat: "JWT",
+      }
+    }
+  }
 }

@@ -30,7 +30,14 @@ type Paramaters = { in: Param, name: string, required?: boolean, schemaName?: st
 type Responses = { [key: string]: { description: string, schema: string } }
 type RequestBody = { content: { [key: string]: { schema: { properties: { [key: string]: {} } } } } }
 type Routes = { route: Route, path: string, method: Method, routerDecorationsFunctions: TypedPropertyDescriptor<RequestHandlerController> }
-type Controllers = { [key: string]: { routes: Routes[], controller: ClassConstructor } }
+type Controllers = { [key: string]: 
+    { 
+        routes: Routes[], 
+        controller: ClassConstructor, 
+        authorize: boolean,
+        middlewares: ExpressMiddlewareType[]
+    } 
+}
 
 type Route = {
     tags: string[],
@@ -38,6 +45,7 @@ type Route = {
     description?: string,
     consumes: Aplication[],
     produces: Aplication[],
+    security: any[],
     parameters?: Paramaters[],
     middlewares?: ExpressMiddlewareType[],
     responses: Responses,
@@ -56,6 +64,8 @@ class RouterDesc {
     #expressRouteresponses: Responses
     #routeParameters: Paramaters[]
 
+    #authorize: boolean
+
     #routesRegistered: string[]
     #expressRouter: Router
 
@@ -66,6 +76,8 @@ class RouterDesc {
     constructor() {
         this.#services = {}
         this.#controllers = {}
+
+        this.#authorize = false;
 
         this.#middlewares = []
 
@@ -83,21 +95,19 @@ class RouterDesc {
 
         if (this.#swaggerDocument.tags === undefined) this.#swaggerDocument.tags = []
         if (this.#swaggerDocument.paths === undefined) this.#swaggerDocument.paths = {}
+        if (this.#swaggerDocument.servers === undefined ||
+            !Array.isArray(this.#swaggerDocument.servers)) this.#swaggerDocument.paths = []
 
         const http_port = process.env.API_HTTP_PORT ? parseInt(process.env.API_HTTP_PORT) : undefined;
         const https_port = process.env.API_HTTPS_PORT ? parseInt(process.env.API_HTTPS_PORT) : undefined;
         const host = process.env.API_HOST ?? 'localhost';
 
         if (host) {
-            var servers: { url: string }[] = []
-            if (http_port) {
-                servers.push({ url: `http://${host}:${http_port}` });
+            if (http_port !== undefined) {
+                this.#swaggerDocument.servers.push({ url: `http://${host}:${http_port}` });
             }
-            if (https_port) {
-                servers.push({ url: `http://${host}:${https_port}` });
-            }
-            if (servers.length > 0) {
-                this.#swaggerDocument.servers = servers;
+            if (https_port !== undefined) {
+                this.#swaggerDocument.servers.push({ url: `https://${host}:${https_port}` });
             }
         }
     }
@@ -111,9 +121,11 @@ class RouterDesc {
 
     addController(name: string, controller: ClassConstructor) {
         this.#controllers[name] = {
-            routes: this.#routes, controller
+            routes: this.#routes, controller, authorize: this.#authorize, middlewares: this.#middlewares
         };
         this.#routes = []
+        this.#authorize = false
+        this.#middlewares = []
     }
 
     addService<T>(service: T) {
@@ -136,7 +148,13 @@ class RouterDesc {
             parameters: this.#routeParameters,
             middlewares: this.#middlewares,
             tags: [],
-            validators: this.#validators
+            validators: this.#validators,
+            security: []
+        }
+        if(this.#authorize){
+            _route.security.push({
+                bearerAuth: [],
+            })
         }
         var toDel: number[] = []
         this.#routeParameters.forEach((param, i) => {
@@ -170,6 +188,7 @@ class RouterDesc {
         this.#routeParameters = []
         this.#middlewares = []
         this.#validators = []
+        this.#authorize = false;
     }
 
     addMiddlewares(middlewares: ExpressMiddlewareType[]) {
@@ -204,14 +223,17 @@ class RouterDesc {
         }
     }
 
+    setAuthorize() {
+        this.#authorize = true;
+    }
+
     #injectServices() {
         Object.entries(this.#controllers).forEach(entrie => {
             try {
                 let controllerName = entrie[0];
                 let routes = entrie[1].routes;
                 let controller = entrie[1].controller;
-                let controllerMiddlewares = this.#middlewares;
-
+                let controllerMiddlewares = entrie[1].middlewares;
                 this.#swaggerDocument.tags.push({
                     name: controllerName
                 });
@@ -228,6 +250,11 @@ class RouterDesc {
                 let _controller = new controller(...args);
 
                 routes.forEach(route => {
+                    if(entrie[1].authorize){
+                        route.route.security.push({
+                            bearerAuth: [],
+                        })
+                    }
                     let method = route.method;
                     let routePath = `/${controllerName}${route.path}`;
                     try {
@@ -387,9 +414,9 @@ export function Middleware(middlewares: any): DecoratorFunctionMethod {
     };
 }
 
-export function GlobalMiddleware(middleware: ExpressMiddlewareType): DecoratorFunctionMethod
-export function GlobalMiddleware(middlewares: ExpressMiddlewareType[]): DecoratorFunctionMethod
-export function GlobalMiddleware(middlewares: any) {
+export function Middlewares(middleware: ExpressMiddlewareType): DecoratorClass
+export function Middlewares(middlewares: ExpressMiddlewareType[]): DecoratorClass
+export function Middlewares(middlewares: any) {
     return function (constructor: ClassConstructor) {
         if (Array.isArray(middlewares))
             _router.addMiddlewares(middlewares);
@@ -397,5 +424,18 @@ export function GlobalMiddleware(middlewares: any) {
             _router.addMiddlewares([middlewares]);
     };
 }
+
+export function Authorize(): DecoratorFunctionMethod {    
+    return function (target: any, propertyKey: string) {
+        _router.setAuthorize();
+    };
+}
+
+export function AuthorizeAll(controller?: string, description?: string) {
+    return function (constructor: ClassConstructor) {
+        _router.setAuthorize();
+    };
+}
+
 
 export default _router

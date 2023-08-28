@@ -4,8 +4,6 @@ import { GlobalResponse } from "../../src/middlewares/ResponseMiddleware"
 import app from "../../src/index"
 import bc from "bcrypt";
 import jwt from "jsonwebtoken";
-import test from 'node:test';
-
 
 afterAll((done) => {
     app.close();

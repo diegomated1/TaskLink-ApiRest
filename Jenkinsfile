@@ -4,6 +4,21 @@ pipeline {
             label 'docker-agent-node'
         }
     }
+    triggers {
+        GenericTrigger(
+            genericVariables: [
+                [key: 'ref', value: '$.ref']
+            ],
+            token: env.GIT_ACTION_TOKEN,
+
+            silentResponse: false,
+
+            shouldNotFlatten: false,
+
+            regexpFilterText: '$ref',
+            regexpFilterExpression: '^refs/heads/test'
+        )
+    }
     stages {
         stage('Build') {
             steps {
@@ -21,7 +36,7 @@ pipeline {
             steps {
                 echo "Testing.."
                 sshagent(credentials : ['GIT_SSH']) {
-                    sh "git remote set-url origin git@github.com:diegomated1/test2.git"
+                    sh "git remote set-url origin git@github.com:diegomated1/git@github.com:diegomated1/TaskLink-ApiRest.gitt"
                     sh "git fetch origin main"
                     sh "git fetch origin test"
                     sh "git checkout main"
@@ -46,13 +61,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploy....'
-                sshagent(credentials : ['SSH_MAIN_MACHINE']) {
+                sshagent(credentials : ['API_VM']) {
                     sh "ssh -o StrictHostKeyChecking=no tasklink-admin@tasklink.bucaramanga.upb.edu.co uptime"
                     sh """
                         ssh -v tasklink-admin@tasklink.bucaramanga.upb.edu.co \
                         docker stop TaskLinkApiRest && \
                         docker rm TaskLinkApiRest && \
-                        docker run --name TaskLinkApiRest -p 0.0.0.0:${env.API_HTTP_PORT}:${env.API_HTTP_PORT} --env ENVIORENT="production" --env API_HTTP_PORT=${env.API_HTTP_PORT} --env JWT_SECRET=${env.JWT_SECRET} --env POSTGRES_CONECTIONSTRING=${env.POSTGRES_CONECTIONSTRING} --restart=always -d diegomated1/TaskLinkApiRest:${env.BUILD_ID}
+                        docker run --name TaskLinkApiRest -p 127.0.0.1:${env.API_HTTP_PORT}:${env.API_HTTP_PORT} --env ENVIORENT="production" --env API_HTTP_PORT=${env.API_HTTP_PORT} --env JWT_SECRET=${env.JWT_SECRET} --env POSTGRES_CONECTIONSTRING=${env.POSTGRES_CONECTIONSTRING} --restart=always -d diegomated1/TaskLinkApiRest:${env.BUILD_ID}
                     """
                 }
             }

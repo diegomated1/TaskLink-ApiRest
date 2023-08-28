@@ -5,6 +5,8 @@ import app from "../../src/index"
 import bc from "bcrypt";
 import jwt from "jsonwebtoken";
 
+const API_TOKEN_DEV = `Bearer ${process.env.API_TOKEN_DEV}`;
+
 afterAll((done) => {
     app.close();
     done();
@@ -13,7 +15,7 @@ afterAll((done) => {
 describe("GET /user", () => {
 
     test("GET ALL DATA", async () => {
-        const response = await request(app.app).get("/user").send();
+        const response = await request(app.app).get("/user").set("Authorization", API_TOKEN_DEV).send();
 
         expect(response.body).toHaveProperty("value");
         expect(response.body).toHaveProperty("errors");
@@ -54,7 +56,7 @@ describe("GET /user", () => {
             success: true
         }
 
-        const response = await request(app.app).get("/user/97f99c61-a665-4eb5-9dd1-799fd82ffd34").send();
+        const response = await request(app.app).get("/user/97f99c61-a665-4eb5-9dd1-799fd82ffd34").set("Authorization", API_TOKEN_DEV).send();
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(200);
     });
@@ -67,7 +69,7 @@ describe("GET /user", () => {
             success: false
         }
 
-        const response = await request(app.app).get("/user/dcdd74a8-09d8-4838-ae5a-135be9180e1b").send();
+        const response = await request(app.app).get("/user/dcdd74a8-09d8-4838-ae5a-135be9180e1b").set("Authorization", API_TOKEN_DEV).send();
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(404);
     });
@@ -80,7 +82,7 @@ describe("GET /user", () => {
             success: false
         }
 
-        const response = await request(app.app).get("/user/dcdd74a8-09d8-4838-ae5a-135be9180e1").send();
+        const response = await request(app.app).get("/user/dcdd74a8-09d8-4838-ae5a-135be9180e1").set("Authorization", API_TOKEN_DEV).send();
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     });
@@ -107,7 +109,7 @@ describe("POST /user", () => {
             errors: [],
             success: true
         }
-        const response = await request(app.app).post("/user").send({ User: User });
+        const response = await request(app.app).post("/user").set("Authorization", API_TOKEN_DEV).send({ User: User });
 
         expect(response.body).toEqual(expectedResponse);
 
@@ -134,7 +136,7 @@ describe("POST /user", () => {
             ],
             success: false
         }
-        const response = await request(app.app).post("/user").send({ User });
+        const response = await request(app.app).post("/user").set("Authorization", API_TOKEN_DEV).send({ User });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     });
@@ -154,7 +156,7 @@ describe("POST /user", () => {
             errors: ["El correo ya se encuentra en uso."],
             success: false
         }
-        const response = await request(app.app).post("/user").send({ User });
+        const response = await request(app.app).post("/user").set("Authorization", API_TOKEN_DEV).send({ User });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     });
@@ -167,10 +169,12 @@ describe("PUT /user", () => {
 
         const newEmail = `${Math.random().toString(16).slice(2)}@gmail.com`;
         const newName = "Diego Cardenas (editado)"
-        let UserPut: Partial<User> = {
-            email: newEmail,
-            fullname: newName,
-            password: "elPepe123@"
+        let body = {
+            User: {
+                email: newEmail,
+                fullname: newName,
+                password: "elPepe123@"
+            }
         };
 
         let UserExpected: User = {
@@ -194,7 +198,7 @@ describe("PUT /user", () => {
             success: true
         }
 
-        const response = await request(app.app).put("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e83").send({ User: UserPut });
+        const response = await request(app.app).put("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e83").set("Authorization", API_TOKEN_DEV).send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(200);
     })
@@ -218,7 +222,7 @@ describe("PUT /user", () => {
             success: false
         }
 
-        const response = await request(app.app).put("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e83").send({ User: UserPut });
+        const response = await request(app.app).put("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e83").set("Authorization", API_TOKEN_DEV).send({ User: UserPut });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     })
@@ -239,7 +243,7 @@ describe("PUT /user", () => {
             success: false
         }
 
-        const response = await request(app.app).put("/user/97f99c61-a665-4eb5-9dd1-799fd82ffd34").send({ User: UserPut });
+        const response = await request(app.app).put("/user/97f99c61-a665-4eb5-9dd1-799fd82ffd34").set("Authorization", API_TOKEN_DEV).send({ User: UserPut });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     })

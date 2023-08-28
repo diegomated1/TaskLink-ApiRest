@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { ServiceError } from '../utils/errors/service.error';
 
-export const Auth = async (req: Request, res: Response, next: NextFunction) => {
+export const AuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const auth = req.get('Authorization');
         if (auth === undefined) throw new ServiceError("No hay un token en el header.");

@@ -1,15 +1,12 @@
 import { Response, Request, NextFunction } from "express";
 import { validate } from "uuid";
 
-import { Controller, Get, FromParam, Post, FromBody, Put, Middleware, FromHeader, Delete, Authorize, Middlewares, AuthorizeAll } from "../router/router";
+import { Controller, Get, FromParam, Post, FromBody, Put, FromHeader, Delete, AuthorizeAll } from "../router/router";
 import { UserPostValidator, UserPutValidator } from "../utils/validators/UserValidator";
 import { UserService } from "../services/UserService";
-import { Auth } from "../middlewares/AuthMiddleware";
-
 
 @Controller()
 @AuthorizeAll()
-@Middlewares(Auth)
 export class UserController {
 
   constructor(

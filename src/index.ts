@@ -9,6 +9,7 @@ import { UserModel } from './models/UserModel';
 import { UserService } from './services/UserService';
 import { AuthService } from './services/AuthService';
 import { AuthController } from './controllers/AuthController';
+import { AuthMiddleware } from './middlewares/AuthMiddleware';
 
 function main(): App {
 
@@ -28,6 +29,7 @@ function main(): App {
     const authService = new AuthService(userModel);
     new AuthController(authService);
 
+    router.addAuthMiddleware(AuthMiddleware);
     router.addService(userService);
     router.addService(authService);
 

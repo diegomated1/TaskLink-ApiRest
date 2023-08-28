@@ -50,7 +50,8 @@ type Route = {
     middlewares?: ExpressMiddlewareType[],
     responses: Responses,
     requestBody?: RequestBody,
-    validators: ValidatorParameterType[]
+    validators: ValidatorParameterType[],
+    authorize: boolean
 }
 
 class RouterDesc {
@@ -73,6 +74,8 @@ class RouterDesc {
 
     #swaggerDocument: JsonObject
 
+    #authMiddleware?: ExpressMiddlewareType
+    
     constructor() {
         this.#services = {}
         this.#controllers = {}
@@ -149,7 +152,8 @@ class RouterDesc {
             middlewares: this.#middlewares,
             tags: [],
             validators: this.#validators,
-            security: []
+            security: [],
+            authorize: this.#authorize
         }
         if(this.#authorize){
             _route.security.push({
@@ -227,6 +231,10 @@ class RouterDesc {
         this.#authorize = true;
     }
 
+    addAuthMiddleware(authMiddleware: ExpressMiddlewareType){
+        this.#authMiddleware = authMiddleware;
+    }
+
     #injectServices() {
         Object.entries(this.#controllers).forEach(entrie => {
             try {
@@ -250,11 +258,6 @@ class RouterDesc {
                 let _controller = new controller(...args);
 
                 routes.forEach(route => {
-                    if(entrie[1].authorize){
-                        route.route.security.push({
-                            bearerAuth: [],
-                        })
-                    }
                     let method = route.method;
                     let routePath = `/${controllerName}${route.path}`;
                     try {
@@ -267,12 +270,27 @@ class RouterDesc {
                         this.#swaggerDocument.paths[routePath][method] = data;
                         let expressPath = routePath.replace('{', ':').replace('}', '');
                         let routeMiddlewares = route.route.middlewares || [];
+
+                        let  _middlewares: ExpressMiddlewareType[] = []
+                        
+                        if(entrie[1].authorize || route.route.authorize){
+                            route.route.security.push({
+                                bearerAuth: [],
+                            });
+                            if(this.#authMiddleware){
+                                _middlewares.push(this.#authMiddleware);
+                            };
+                        }
+
+                        _middlewares.push(validatorMiddleware(route.route.validators));
+                        _middlewares.push(...routeMiddlewares);
+                        _middlewares.push(...controllerMiddlewares);
                         switch (method) {
-                            case Method.get: this.#expressRouter.get(expressPath, validatorMiddleware(route.route.validators), ...routeMiddlewares, ...controllerMiddlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
-                            case Method.post: this.#expressRouter.post(expressPath, validatorMiddleware(route.route.validators), ...routeMiddlewares, ...controllerMiddlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
-                            case Method.put: this.#expressRouter.put(expressPath, validatorMiddleware(route.route.validators), ...routeMiddlewares, ...controllerMiddlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
-                            case Method.patch: this.#expressRouter.patch(expressPath, validatorMiddleware(route.route.validators), ...routeMiddlewares, ...controllerMiddlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
-                            case Method.delete: this.#expressRouter.delete(expressPath, validatorMiddleware(route.route.validators), ...routeMiddlewares, ...controllerMiddlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
+                            case Method.get: this.#expressRouter.get(expressPath, _middlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
+                            case Method.post: this.#expressRouter.post(expressPath, _middlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
+                            case Method.put: this.#expressRouter.put(expressPath, _middlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
+                            case Method.patch: this.#expressRouter.patch(expressPath, _middlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
+                            case Method.delete: this.#expressRouter.delete(expressPath, _middlewares, route.routerDecorationsFunctions.value!.bind(_controller)); break
                         }
                     } catch (error) {
                         console.log((error as Error).message)
@@ -431,7 +449,7 @@ export function Authorize(): DecoratorFunctionMethod {
     };
 }
 
-export function AuthorizeAll(controller?: string, description?: string) {
+export function AuthorizeAll() {
     return function (constructor: ClassConstructor) {
         _router.setAuthorize();
     };

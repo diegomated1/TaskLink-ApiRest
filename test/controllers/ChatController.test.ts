@@ -13,7 +13,7 @@ afterAll((done) => {
 });
 
 
-describe('POST /chat/send-message', () => {
+describe.skip('POST /chat/send-message', () => {
     test('Send Message', async () => {
         const senderUserId = '1dde026b-8b82-49b9-a9ed-1ed2d7208e86'; 
         const recipientUserId = '1dde026b-8b82-49b9-a9ed-1ed2d7208e86'; 

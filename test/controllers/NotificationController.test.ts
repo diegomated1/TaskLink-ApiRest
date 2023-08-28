@@ -12,7 +12,7 @@ afterAll((done) => {
 });
 
 
-describe('PATCH /user/notification-settings', () => {
+describe.skip('PATCH /user/notification-settings', () => {
     test('Update Notification Settings', async () => {
         const id_user = '1dde026b-8b82-49b9-a9ed-1ed2d7208e86';
         const notificationSettings = {

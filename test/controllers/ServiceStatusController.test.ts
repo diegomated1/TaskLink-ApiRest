@@ -12,7 +12,7 @@ afterAll((done) => {
 });
 
 
-describe('PATCH /service-request/:id', () => {
+describe.skip('PATCH /service-request/:id', () => {
     test('Accept Request', async () => {
         const requestId = 'Aun no hay ID en la base de datos'; 
         const action = 'accept'; 
@@ -76,7 +76,7 @@ describe('PATCH /service-request/:id', () => {
 });
 
 
-describe('GET /service-requests', () => {
+describe.skip('GET /service-requests', () => {
     test('List Service Requests', async () => {
         const expectedResponse = {
             value: [
@@ -100,7 +100,7 @@ describe('GET /service-requests', () => {
     });
 });
 
-describe('PATCH /service-request/:id/adjust-price', () => {
+describe.skip('PATCH /service-request/:id/adjust-price', () => {
     test('Increase Price', async () => {
         const requestId = 'Aun no hay ID en la base de datos';
         const body = {

@@ -117,7 +117,7 @@ class RouterDesc {
 
     Router() {
         this.#injectServices();
-        //console.log(JSON.stringify(this.#swaggerDocument));
+        console.log(JSON.stringify(this.#swaggerDocument));
         this.#expressRouter.use('/swagger', swaggerUi.serve, swaggerUi.setup(this.#swaggerDocument));
         return this.#expressRouter;
     }
@@ -160,7 +160,7 @@ class RouterDesc {
                 bearerAuth: [],
             })
         }
-        var toDel: number[] = []
+        
         this.#routeParameters.forEach((param, i) => {
             if (param.in == Param.body && param.schema && param.schemaName) {
                 if (_route.requestBody == null) {
@@ -177,16 +177,13 @@ class RouterDesc {
                 _route.requestBody.content["application/json"].schema.properties[param.schemaName] = {
                     $ref: param.schema.$ref
                 }
-                toDel.push(i)
-            }
-            if (param.in == Param.param && !path.includes(`{${param.name}}`)) {
+            }else if (param.in == Param.param && !path.includes(`{${param.name}}`)) {
                 console.log(`cant add route: ${path}, left param: ${param.name}`);
                 return;
             }
         });
-        toDel.forEach(item => {
-            _route.parameters?.splice(item, 1);
-        })
+        _route.parameters = _route.parameters?.filter(r=>r.in != Param.body);
+    
         this.#routes.push({ route: _route, path, routerDecorationsFunctions, method });
         this.#expressRouteresponses = {}
         this.#routeParameters = []

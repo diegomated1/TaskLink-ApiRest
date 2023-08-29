@@ -36,7 +36,7 @@ pipeline {
             steps {
                 echo "Testing.."
                 sshagent(credentials : ['GIT_SSH']) {
-                    sh "git remote set-url origin git@github.com:diegomated1/git@github.com:diegomated1/TaskLink-ApiRest.gitt"
+                    sh "git remote set-url origin git@github.com:diegomated1/git@github.com:diegomated1/TaskLink-ApiRest.git"
                     sh "git fetch origin main"
                     sh "git fetch origin test"
                     sh "git checkout main"

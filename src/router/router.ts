@@ -117,7 +117,7 @@ class RouterDesc {
 
     Router() {
         this.#injectServices();
-        console.log(JSON.stringify(this.#swaggerDocument));
+        //console.log(JSON.stringify(this.#swaggerDocument));
         this.#expressRouter.use('/swagger', swaggerUi.serve, swaggerUi.setup(this.#swaggerDocument));
         return this.#expressRouter;
     }

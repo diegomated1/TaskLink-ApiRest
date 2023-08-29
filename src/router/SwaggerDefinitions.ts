@@ -8,7 +8,7 @@ export const swaggerDefinitions: JsonObject = {
   },
   servers: [
     {
-      url: "http://tasklink.bucaramanga.upb.edu.co"
+      url: "http://tasklink.eastus.cloudapp.azure.com"
     }
   ],
   components: {

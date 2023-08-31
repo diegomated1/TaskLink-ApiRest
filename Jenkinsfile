@@ -53,7 +53,7 @@ pipeline {
                 }
                 echo "Building.."
                 script {
-                    def customImage = docker.build("diegomated1/TaskLinkApiRest:${env.BUILD_ID}")
+                    def customImage = docker.build("diegomated1/tasklink-apirest:${env.BUILD_ID}")
                     customImage.push()
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
                         ssh -v azureuser@tasklink.eastus.cloudapp.azure.com \
                         docker stop TaskLinkApiRest && \
                         docker rm TaskLinkApiRest && \
-                        docker run --name TaskLinkApiRest -p 127.0.0.1:${env.API_HTTP_PORT}:${env.API_HTTP_PORT} --env ENVIORENT="production" --env API_HTTP_PORT=${env.API_HTTP_PORT} --env JWT_SECRET=${env.JWT_SECRET} --env POSTGRES_CONECTIONSTRING=${env.POSTGRES_CONECTIONSTRING} --restart=always -d diegomated1/TaskLinkApiRest:${env.BUILD_ID}
+                        docker run --name TaskLinkApiRest -p 127.0.0.1:${env.API_HTTP_PORT}:${env.API_HTTP_PORT} --env ENVIORENT="production" --env API_HTTP_PORT=${env.API_HTTP_PORT} --env JWT_SECRET=${env.JWT_SECRET} --env POSTGRES_CONECTIONSTRING=${env.POSTGRES_CONECTIONSTRING} --restart=always -d diegomated1/tasklink-apirest:${env.BUILD_ID}
                     """
                 }
             }

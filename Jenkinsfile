@@ -61,14 +61,14 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploy....'
-                sshagent(credentials : ['API_VM']) {
-                    sh "ssh -o StrictHostKeyChecking=no azureuser@tasklink.eastus.cloudapp.azure.com uptime"
-                    sh """
-                        ssh -v azureuser@tasklink.eastus.cloudapp.azure.com \
-                        docker stop TaskLinkApiRest && \
-                        docker rm TaskLinkApiRest && \
-                        docker run --name TaskLinkApiRest -p 127.0.0.1:${env.API_HTTP_PORT}:${env.API_HTTP_PORT} --env ENVIORENT="production" --env API_HTTP_PORT=${env.API_HTTP_PORT} --env JWT_SECRET=${env.JWT_SECRET} --env POSTGRES_CONECTIONSTRING=${env.POSTGRES_CONECTIONSTRING} --restart=always -d diegomated1/tasklink-apirest:${env.BUILD_ID}
-                    """
+                script {
+                    def cmStop = "docker rm -f TaskLinkApiRest 2> /dev/null || true"
+                    def cmRm = "docker stop -f TaskLinkApiRest 2> /dev/null || true"
+                    def cmRun = "docker run --name TaskLinkApiRest -p 127.0.0.1:${env.API_HTTP_PORT}:${env.API_HTTP_PORT} --env ENVIORENT=production --env API_HTTP_PORT=${env.API_HTTP_PORT} --env JWT_SECRET=${env.JWT_SECRET} --env POSTGRES_CONECTIONSTRING=${env.POSTGRES_CONECTIONSTRING} --restart=always -d diegomated1/tasklink-apirest:2"
+                    sshagent(credentials : ['API_VM']) {
+                        sh "ssh -o StrictHostKeyChecking=no azureuser@tasklink.eastus.cloudapp.azure.com uptime"
+                        sh "ssh -v azureuser@tasklink.eastus.cloudapp.azure.com '${cmStop} && ${cmRm} && ${cmRun}'"
+                    }
                 }
             }
         }

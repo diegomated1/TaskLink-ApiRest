@@ -24,8 +24,7 @@ pipeline {
             steps {
                 echo "Building.."
                 sh 'npm install jest supertest'
-                sh 'cd ./src/database'
-                sh 'docker-compose up -d'
+                sh 'docker-compose up -f ./src/database/docker-compose.yml -d'
             }
         }
         stage('Test') {

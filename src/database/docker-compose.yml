@@ -3,29 +3,14 @@ services:
   postgres:
     image: postgres
     restart: always
-    container_name: postgres-db
+    container_name: postgres
     environment:
-      POSTGRES_USER: tasklinkadmin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: TaskLink
-    ports:
-      - "5432:5432"
+      - POSTGRES_USER=tasklinkadmin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=TaskLink
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - pg
-
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: always
-    container_name: postgres-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    depends_on:
-      - postgres
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - ./database.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
       - pg
 
@@ -36,4 +21,3 @@ networks:
 
 volumes:
   postgres_data:
-  pgadmin_data:

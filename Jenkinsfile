@@ -39,7 +39,7 @@ pipeline {
                     sh "git remote set-url origin git@github.com:diegomated1/TaskLink-ApiRest.git"
                     sh "git fetch origin main"
                     sh "git fetch origin test"
-                    sh "git checkout main"
+                    sh "git checkout -f main"
                     sh "git merge origin/test"
                     sh "git push origin main"
                 }

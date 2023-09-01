@@ -5,11 +5,11 @@ import { Database } from './database/database';
 import router from './router/router';
 import App from './app';
 import { UserController } from './controllers/UserController';
-import { UserModel } from './models/UserModel';
 import { UserService } from './services/UserService';
 import { AuthService } from './services/AuthService';
 import { AuthController } from './controllers/AuthController';
 import { AuthMiddleware } from './middlewares/AuthMiddleware';
+import { Conection } from './database/Conection';
 
 function main(): App {
 
@@ -18,15 +18,15 @@ function main(): App {
     const conectionString = enviorent === "production" ? process.env.POSTGRES_CONECTIONSTRING! : process.env.POSTGRES_CONECTIONSTRING_DEV!;
 
     const database = new Database(conectionString);
-    database.connect();
+
+    const conection = new Conection(database);
 
     // User
-    const userModel = new UserModel(database);
-    const userService = new UserService(userModel);
+    const userService = new UserService(conection);
     new UserController(userService);
 
     // Auth
-    const authService = new AuthService(userModel);
+    const authService = new AuthService(conection);
     new AuthController(authService);
 
     router.addAuthMiddleware(AuthMiddleware);

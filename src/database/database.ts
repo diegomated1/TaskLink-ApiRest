@@ -1,20 +1,25 @@
-import { Client } from "pg";
+import { Client, Pool, PoolClient } from "pg";
 
 export class Database {
 
-    client: Client
+    //client: Client
+    pool: Pool
 
     constructor(
         private readonly connectionString: string
     ) {
-        this.client = new Client({ connectionString: this.connectionString });
+        this.pool = new Pool({
+            connectionString: this.connectionString,
+            max: 30
+        })
     }
 
-    connect = async () => {
-        await this.client.connect();
+    connect = async (): Promise<PoolClient> => {
+        const client = await this.pool.connect();
+        return client;
     }
 
     close = async () => {
-        await this.client.end();
+        await this.pool.end();
     }
 } 

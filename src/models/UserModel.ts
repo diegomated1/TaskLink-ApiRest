@@ -1,19 +1,12 @@
 import { User } from 'interfaces/User';
-import { Database } from '../database/database';
-import { Client } from 'pg';
+import { BaseModel } from './BaseModel';
+import { ServiceError } from '../utils/errors/service.error';
 
-export class UserModel {
-
-    readonly client: Client
-
-    constructor(
-        private readonly database: Database
-    ) {
-        this.client = database.client;
-    }
+export class UserModel extends BaseModel {
 
     getById = (id: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const query = 'SELECT * FROM dbo."User" WHERE id = $1';
                 const values = [id];
@@ -28,6 +21,7 @@ export class UserModel {
 
     getByEmail = (email: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const query = 'SELECT * FROM dbo."User" WHERE email = $1';
                 const values = [email];
@@ -42,6 +36,7 @@ export class UserModel {
 
     getByIdentification = (cc: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const query = 'SELECT * FROM dbo."User" WHERE identification = $1';
                 const values = [cc];
@@ -56,6 +51,7 @@ export class UserModel {
 
     getAll = (): Promise<User[]> => {
         return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const query = 'SELECT * FROM dbo."User"';
                 const result = await this.client.query<User>(query);
@@ -69,6 +65,7 @@ export class UserModel {
 
     insert = (user: User): Promise<User | null> => {
         return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const columns = Object.keys(user).join(', ');
                 const placeholders = Object.entries(user).map((_, i) => `$${i + 1}`).join(', ');
@@ -86,6 +83,7 @@ export class UserModel {
 
     update = (userId: string, entity: Partial<User>): Promise<User | null> => {
         return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const updateClauses = Object.entries(entity)
                     .map(([key, value], i) => `"${key}" = $${i + 1}`)
@@ -107,6 +105,7 @@ export class UserModel {
 
     delete = (id: string): Promise<boolean> => {
         return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 res(true);
             } catch (error) {

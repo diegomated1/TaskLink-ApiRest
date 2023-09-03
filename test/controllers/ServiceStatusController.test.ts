@@ -1,9 +1,5 @@
-import request from 'supertest'
-import { User } from '../../src/interfaces/User';
-import { GlobalResponse } from "../../src/middlewares/ResponseMiddleware"
-import app from "../../src/index"
-import bc from "bcrypt";
-import jwt from "jsonwebtoken";
+import request from 'supertest';
+import app from "../../src/index";
 
 
 afterAll((done) => {

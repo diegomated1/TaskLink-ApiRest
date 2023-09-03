@@ -4,32 +4,57 @@ import { GlobalResponse } from "../../src/middlewares/ResponseMiddleware"
 import app from "../../src/index"
 import bc from "bcrypt";
 import jwt from "jsonwebtoken";
-
+import nodemailer from "nodemailer";
 
 afterAll((done) => {
     app.close();
     done();
 });
 
-describe.skip("PATCH /user/email-verify", () => {
+describe.skip("POST /auth/verify-email", () => {
 
     test("GOD DATA", async ()=> {
 
-        const token = jwt.sign({
-            id_user: "1dde026b-8b82-49b9-a9ed-1ed2d7208e86"
-        }, process.env.JWT_SECRET!);
-    
-        const body = {
-            newCode: "1234"
+        const token = process.env.API_TOKEN_DEV;
+
+        // create new user
+        const emailUser = await nodemailer.createTestAccount();
+        const cc = Math.random().toString().slice(2);
+
+        let User: Partial<User> = {
+            identification_type_id: 1,
+            identification: cc,
+            fullname: "Diego Cardenas",
+            email: emailUser.user,
+            birthdate: "2002-10-15T05:00:00.000Z",
+            phone: "573173887502",
+            password: emailUser.pass
+        };
+        let expectedResponse: GlobalResponse<any> = {
+            value: expect.any(String),
+            errors: [],
+            success: true
         }
 
-        const expectedResponse: GlobalResponse<null> = {
+        let body: any = {
+            User
+        }
+
+        const responseCreateUser = await request(app.app).post("/user").send(body);
+        expect(responseCreateUser.body).toEqual(expectedResponse);
+        
+
+        body = {
+            email: "diegodaco08@gmail.com"
+        }
+
+        expectedResponse = {
             value: null,
             errors: [],
             success: true
         }
 
-        const response = await request(app.app).patch(`/user/email-verify/?token=${token}`).send(body);
+        const response = await request(app.app).post(`/user/verify-email`).send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(200);
     });
@@ -53,7 +78,6 @@ describe.skip("PATCH /user/email-verify", () => {
         expect(response.statusCode).toBe(401);
     })
 
-
     test("WRONG MAIL-VERIFY", async ()=> {
         
         const token = jwt.sign({
@@ -76,7 +100,6 @@ describe.skip("PATCH /user/email-verify", () => {
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     })
-
 
     describe('POST /user/verify-document', () => {
 

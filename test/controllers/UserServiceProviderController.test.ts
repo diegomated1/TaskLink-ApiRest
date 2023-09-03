@@ -33,7 +33,7 @@ describe.skip("PATCH /user/:id/provider", () => {
             success: false
         }
 
-        const response = await request(app.app).patch("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e23/provider").send();
+        const response = await request(app.app).patch("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e24/provider").send();
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     })
@@ -51,6 +51,5 @@ describe.skip("PATCH /user/:id/provider", () => {
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     })
-
 
 })                                                          

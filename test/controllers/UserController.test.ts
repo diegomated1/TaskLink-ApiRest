@@ -48,6 +48,9 @@ describe("GET /user", () => {
             phone: "573173887502",
             birthdate: expect.any(String),
             password: expect.any(String),
+            email_code: null,
+            email_code_generate: null,
+            provider: false,
             role_id: 1
         };
         var expectedResponse = {
@@ -109,7 +112,7 @@ describe("POST /user", () => {
             errors: [],
             success: true
         }
-        const response = await request(app.app).post("/user").set("Authorization", API_TOKEN_DEV).send({ User: User });
+        const response = await request(app.app).post("/auth/register").set("Authorization", API_TOKEN_DEV).send({ User: User });
 
         expect(response.body).toEqual(expectedResponse);
 
@@ -136,7 +139,7 @@ describe("POST /user", () => {
             ],
             success: false
         }
-        const response = await request(app.app).post("/user").set("Authorization", API_TOKEN_DEV).send({ User });
+        const response = await request(app.app).post("/auth/register").set("Authorization", API_TOKEN_DEV).send({ User });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     });
@@ -156,7 +159,7 @@ describe("POST /user", () => {
             errors: ["El correo ya se encuentra en uso."],
             success: false
         }
-        const response = await request(app.app).post("/user").set("Authorization", API_TOKEN_DEV).send({ User });
+        const response = await request(app.app).post("/auth/register").set("Authorization", API_TOKEN_DEV).send({ User });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     });
@@ -189,6 +192,9 @@ describe("PUT /user", () => {
             phone: "573173887502",
             password: expect.any(String),
             role_id: 1,
+            email_code: null,
+            email_code_generate: null,
+            provider: false,
             birthdate: expect.any(String),
         };
 

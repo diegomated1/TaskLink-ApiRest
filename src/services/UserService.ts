@@ -61,7 +61,7 @@ export class UserService {
                 const user: User = {
                     ...entity, id, avatar_url: null,
                     email_verified: false, registration_date: new Date(),
-                    role_id: 1
+                    role_id: 1, email_code: null, email_code_generate: null, provider: false
                 }
                 const _user = await userModel.insert(user);
                 if (_user) {

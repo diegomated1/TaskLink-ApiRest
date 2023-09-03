@@ -6,6 +6,7 @@ import bc from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from '../interfaces/User';
 import { Conection } from '../database/Conection';
+import { Email } from '../utils/services/emailService';
 
 export class UserService {
 
@@ -123,5 +124,65 @@ export class UserService {
             }
         });
     };
+
+    forgotPassword = (email: string): Promise<void> => {
+        return new Promise(async (res, rej) => {
+            const userModel = new UserModel(this.conection);
+            await userModel.start();
+            try {
+                const _user = await userModel.getByEmail(email);
+                
+                if (!_user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
+
+                const email_code = Math.floor(1000 + Math.random() * 9000);
+
+                await userModel.update(_user.id, { email_code, email_code_generate: Date.now() });
+
+                await Email.ResetPassword(_user.email, _user.fullname, email_code);
+
+                await userModel.commit();
+                res();
+            } catch (err) {
+                await userModel.rollback();
+                rej(err);
+            }
+        });
+    };
+
+    resetPassword = (userId: string, email_code: number, new_password: string): Promise<void> => {
+        return new Promise(async (res, rej) => {
+            const userModel = new UserModel(this.conection);
+            await userModel.start();
+            try {
+                const _user = await userModel.getById(userId);
+
+                if (!_user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
+                
+                if (!_user.email_code || !_user.email_code_generate) throw new ServiceError("Codigo no generado.");
+
+                const current = Date.now();
+                const email = _user.email_code_generate;
+                const five_minutes = 5 * 60 * 1000;
+
+                if (Math.abs(current - email) > five_minutes) throw new ServiceError("Codigo vencido.");
+
+                if (_user.email_code != email_code) throw new ServiceError("Codigo incorrecto.");
+
+                const password = await bc.hash(new_password, 10);
+                await userModel.update(userId, {
+                    email_code: null,
+                    email_code_generate: null,
+                    password
+                });
+
+                await userModel.commit();
+                res();
+            } catch (err) {
+                await userModel.rollback();
+                rej(err);
+            }
+        });
+    }
+
 
 }

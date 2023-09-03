@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS dbo."User"(
     role_id INT NOT NULL,
     provider BOOLEAN NOT NULL,
     email_code INT,
-    email_code_generate INT,
+    email_code_generate BIGINT,
     FOREIGN KEY (role_id) REFERENCES dbo."Role"(id),
     FOREIGN KEY (identification_type_id) REFERENCES dbo."IdentificationType"(id)
 );

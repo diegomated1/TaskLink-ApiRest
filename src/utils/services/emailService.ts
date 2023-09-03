@@ -46,7 +46,7 @@ export class Email {
         return new Promise(async (res, rej) => {
             try {
                 // Get html body
-                const filePath = path.join(__dirname, "../../../public/ResetPassword.html");
+                const filePath = path.join(__dirname, "../../../public/email/ResetPassword.html");
                 const html_base = fs.readFileSync(filePath, "utf8");
 
                 // Replace code in html body

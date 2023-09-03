@@ -86,4 +86,31 @@ export class UserController {
     }
   };
 
+  @Post("/forgot-password")
+  @FromBody("email")
+  async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body;
+      await this.userService.forgotPassword(email);
+
+      res.Ok()
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  @Post("/{id_user}/reset-password")
+  @FromParam("id_user") @FromBody("email_code") @FromBody("new_password")
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id_user } = req.params;
+      const { email_code, new_password } = req.body;
+      await this.userService.resetPassword(id_user, email_code, new_password);
+      
+      res.Ok()
+    } catch (error) {
+      next(error);
+    }
+  }
+
 } 

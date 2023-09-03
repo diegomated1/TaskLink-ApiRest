@@ -10,5 +10,8 @@ export interface User {
   phone: string;
   birthdate: string;
   password: string;
+  provider: boolean;
+  email_code: number | null;
+  email_code_generate: number | null;
   role_id: number;
 }

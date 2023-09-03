@@ -5,11 +5,14 @@ import { Database } from './database/database';
 import router from './router/router';
 import App from './app';
 import { UserController } from './controllers/UserController';
-import { UserService } from './services/UserService';
+import { UserService } from './services/UserService'; 
 import { AuthService } from './services/AuthService';
 import { AuthController } from './controllers/AuthController';
 import { AuthMiddleware } from './middlewares/AuthMiddleware';
 import { Conection } from './database/Conection';
+import { UserProviderService } from './services/UserProviderService';
+import { UserProviderController } from './controllers/UserProviderController';
+import { EmailService } from './services/EmailService';
 
 function main(): App {
 
@@ -27,11 +30,18 @@ function main(): App {
 
     // Auth
     const authService = new AuthService(conection);
-    new AuthController(authService);
+    const emailService = new EmailService(conection);
+    new AuthController(authService, emailService);
+
+    // Auth
+    const userProviderService = new UserProviderService(conection);
+    new UserProviderController(userProviderService);
 
     router.addAuthMiddleware(AuthMiddleware);
     router.addService(userService);
     router.addService(authService);
+    router.addService(userProviderService);
+    router.addService(emailService);
 
     const app = new App(router.Router(), database);
     app.start();

@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { ServiceError } from '../utils/errors/service.error';
 
@@ -11,7 +11,10 @@ export const AuthMiddleware = async (req: Request, res: Response, next: NextFunc
         if (token_bearer[0].toLowerCase() !== 'bearer') throw new ServiceError("Token invalido");
 
         var token = token_bearer[1];
-        jwt.verify(token, process.env.JWT_SECRET!);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+        if(!decoded.userId) throw new ServiceError("Token invalido.");
+        
+        res.locals.userId = decoded.userId;
         next();
     } catch (error) {
         next(error);

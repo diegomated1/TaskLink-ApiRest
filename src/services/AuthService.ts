@@ -7,12 +7,12 @@ import { User } from "../interfaces/User";
 import { Conection } from "../database/Conection";
 
 export class AuthService {
-    
+
     constructor(
         private readonly conection: Conection
     ) { }
 
-    login = (email: string , password: string ): Promise<{User:User,token:String}> => {
+    login = (email: string, password: string): Promise<string> => {
         return new Promise(async (res, rej) => {
             const userModel = new UserModel(this.conection);
             await userModel.start();
@@ -20,21 +20,20 @@ export class AuthService {
                 const _user = await userModel.getByEmail(email);
 
                 if (_user) {
-                    if (await bc.compare(password,_user.password)){
+                    if (await bc.compare(password, _user.password)) {
 
-                        const token = jwt.sign(_user, process.env.JWT_SECRET!, {
+                        const token = jwt.sign({
+                            userId: _user.id
+                        }, process.env.JWT_SECRET!, {
                             expiresIn: "24h"
                         });
-                        res( {
-                            User: _user,
-                            token: token,
-                        });
+                        res(token);
                     }
-                    else{
-                        throw new ServiceError("Contraseña incorrecta.",HttpStatusCode.UNAUTHORIZED);
+                    else {
+                        throw new ServiceError("Contraseña incorrecta.", HttpStatusCode.UNAUTHORIZED);
                     }
-                }else{
-                    throw new ServiceError("Correo no encontrado.",HttpStatusCode.UNAUTHORIZED);
+                } else {
+                    throw new ServiceError("Correo no encontrado.", HttpStatusCode.UNAUTHORIZED);
                 }
             } catch (error) {
                 await userModel.rollback();

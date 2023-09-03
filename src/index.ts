@@ -31,7 +31,7 @@ function main(): App {
     // Auth
     const authService = new AuthService(conection);
     const emailService = new EmailService(conection);
-    new AuthController(authService, emailService);
+    new AuthController(authService, emailService, userService);
 
     // Auth
     const userProviderService = new UserProviderService(conection);

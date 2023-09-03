@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import { validate } from "uuid";
 
 import { Controller, Get, FromParam, Post, FromBody, Put, FromHeader, Delete, AuthorizeAll } from "../router/router";
-import { UserPostValidator, UserPutValidator } from "../utils/validators/UserValidator";
+import { UserPutValidator } from "../utils/validators/UserValidator";
 import { UserService } from "../services/UserService";
 
 @Controller()
@@ -36,20 +36,6 @@ export class UserController {
       (user)
         ? res.Ok(user)
         : res.NotFound("Usuario no encontrado.");
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  @Post()
-  @FromBody("User", UserPostValidator)
-  async insert(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { User } = req.body;
-
-      const _user = await this.userService.insert(User);
-
-      res.Ok(_user);
     } catch (error) {
       next(error);
     }

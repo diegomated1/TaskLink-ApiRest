@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import bc from "bcrypt";
 import { ServiceError } from "../utils/errors/service.error";
 import { HttpStatusCode } from "../router/RouterTypes";
-import { User } from "../interfaces/User";
 import { Conection } from "../database/Conection";
 
 export class AuthService {
@@ -14,8 +13,8 @@ export class AuthService {
 
     login = (email: string, password: string): Promise<string> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const _user = await userModel.getByEmail(email);
 
@@ -27,6 +26,7 @@ export class AuthService {
                         }, process.env.JWT_SECRET!, {
                             expiresIn: "24h"
                         });
+                        this.conection.commit(client);
                         res(token);
                     }
                     else {
@@ -36,7 +36,7 @@ export class AuthService {
                     throw new ServiceError("Correo no encontrado.", HttpStatusCode.UNAUTHORIZED);
                 }
             } catch (error) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(error)
             }
         });

@@ -12,8 +12,8 @@ export class EmailService {
 
     VerifyEmail = (email: string): Promise<void> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const _user = await userModel.getByEmail(email);
 
@@ -27,11 +27,10 @@ export class EmailService {
 
                 await Email.Verify(email, email_code);
 
-                await userModel.commit();
+                await this.conection.commit(client);
                 res();
             } catch (error) {
-                console.log(error);
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(error)
             }
         });
@@ -39,8 +38,8 @@ export class EmailService {
 
     VerifyEmailCode = (userId: string, code: number): Promise<void> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const _user = await userModel.getById(userId);
 
@@ -64,10 +63,10 @@ export class EmailService {
                     email_verified: true
                 });
 
-                await userModel.commit();
+                await this.conection.commit(client);
                 res();
             } catch (error) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(error)
             }
         });
@@ -75,8 +74,8 @@ export class EmailService {
 
     ResetPassword = (email: string): Promise<void> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const _user = await userModel.getByEmail(email);
 
@@ -88,10 +87,10 @@ export class EmailService {
 
                 await Email.ResetPassword(email, _user.fullname, email_code);
 
-                userModel.commit();
+                await this.conection.commit(client);
                 res();
             } catch (error) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(error)
             }
         });

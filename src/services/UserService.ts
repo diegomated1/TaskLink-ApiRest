@@ -16,14 +16,14 @@ export class UserService {
 
     getAll = (): Promise<User[]> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const users = await userModel.getAll();
-                await userModel.commit();
+                await this.conection.commit(client);
                 res(users);
             } catch (err) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(err);
             }
         });
@@ -31,14 +31,14 @@ export class UserService {
 
     getById = (id: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const user = await userModel.getById(id);
-                await userModel.commit();
+                await this.conection.commit(client);
                 res(user);
             } catch (err) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(err);
             }
         });
@@ -46,8 +46,8 @@ export class UserService {
 
     insert = (entity: User): Promise<string> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const _userCheck = await userModel.getByEmail(entity.email);
                 if (_userCheck) throw new ServiceError("El correo ya se encuentra en uso.")
@@ -65,15 +65,18 @@ export class UserService {
                 }
                 const _user = await userModel.insert(user);
                 if (_user) {
-                    const token = jwt.sign(_user, process.env.JWT_SECRET!, {
+                    const token = jwt.sign({
+                        userId: _user.id,
+                    }, process.env.JWT_SECRET!, {
                         expiresIn: "24h"
                     });
+                    await this.conection.commit(client);
                     res(token);
                 } else {
                     throw new ServiceError("La cedula ya se encuentra en uso.", HttpStatusCode.BAD_REQUEST);
                 }
             } catch (error) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(error)
             }
         });
@@ -81,8 +84,8 @@ export class UserService {
     
     update = (id: string, entity: Partial<User>) => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
 
                 const userCheck = await userModel.getById(id);
@@ -102,9 +105,10 @@ export class UserService {
                 if (!user)
                     throw new ServiceError("No se pudo actualizar el usuario.", HttpStatusCode.INTERNAL_SERVER_ERROR);
 
+                await this.conection.commit(client);
                 res(user);
             } catch (error) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(error)
             }
         });
@@ -112,14 +116,14 @@ export class UserService {
 
     delete = (id: string): Promise<boolean> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const result = await userModel.delete(id);
-                await userModel.commit();
+                await this.conection.commit(client);
                 res(result);
             } catch (err) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(err);
             }
         });
@@ -127,8 +131,8 @@ export class UserService {
 
     forgotPassword = (email: string): Promise<void> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const _user = await userModel.getByEmail(email);
                 
@@ -140,10 +144,10 @@ export class UserService {
 
                 await Email.ResetPassword(_user.email, _user.fullname, email_code);
 
-                await userModel.commit();
+                await this.conection.commit(client);
                 res();
             } catch (err) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(err);
             }
         });
@@ -151,8 +155,8 @@ export class UserService {
 
     resetPassword = (userId: string, email_code: number, new_password: string): Promise<void> => {
         return new Promise(async (res, rej) => {
-            const userModel = new UserModel(this.conection);
-            await userModel.start();
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
             try {
                 const _user = await userModel.getById(userId);
 
@@ -175,10 +179,10 @@ export class UserService {
                     password
                 });
 
-                await userModel.commit();
+                await this.conection.commit(client);
                 res();
             } catch (err) {
-                await userModel.rollback();
+                await this.conection.rollback(client);
                 rej(err);
             }
         });

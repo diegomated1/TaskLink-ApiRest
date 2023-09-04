@@ -1,8 +1,12 @@
 import { User } from 'interfaces/User';
-import { BaseModel } from './BaseModel';
 import { ServiceError } from '../utils/errors/service.error';
+import { PoolClient } from 'pg';
 
-export class UserModel extends BaseModel {
+export class UserModel {
+    constructor(
+        private readonly client?: PoolClient
+    ) {
+    }
 
     getById = (id: string): Promise<User | null> => {
         return new Promise(async (res, rej) => {

@@ -87,7 +87,6 @@ export class UserService {
             const client = await this.conection.connect();
             const userModel = new UserModel(client);
             try {
-
                 const userCheck = await userModel.getById(id);
 
                 if (!userCheck)
@@ -153,27 +152,27 @@ export class UserService {
         });
     };
 
-    resetPassword = (userId: string, email_code: number, new_password: string): Promise<void> => {
+    resetPassword = (email: string, email_code: number, new_password: string): Promise<void> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const userModel = new UserModel(client);
             try {
-                const _user = await userModel.getById(userId);
+                const _user = await userModel.getByEmail(email);
 
                 if (!_user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
                 
                 if (!_user.email_code || !_user.email_code_generate) throw new ServiceError("Codigo no generado.");
 
                 const current = Date.now();
-                const email = _user.email_code_generate;
+                const email_exp = _user.email_code_generate;
                 const five_minutes = 5 * 60 * 1000;
 
-                if (Math.abs(current - email) > five_minutes) throw new ServiceError("Codigo vencido.");
+                if (Math.abs(current - email_exp) > five_minutes) throw new ServiceError("Codigo vencido.");
 
                 if (_user.email_code != email_code) throw new ServiceError("Codigo incorrecto.");
 
                 const password = await bc.hash(new_password, 10);
-                await userModel.update(userId, {
+                await userModel.update(_user.id, {
                     email_code: null,
                     email_code_generate: null,
                     password

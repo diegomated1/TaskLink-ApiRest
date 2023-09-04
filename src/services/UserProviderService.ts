@@ -62,7 +62,7 @@ export class UserProviderService {
                 const user = await userModel.getById(user_id);
                 if(!user) throw new ServiceError("Usuario no encontrado.");
                 
-                const user_provider = await userModel.getById(user_id);
+                const user_provider = await userModel.getById(service_provider_id);
                 if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.");
 
                 const _favorite = await favModel.getOne(user_id, service_provider_id);
@@ -87,7 +87,7 @@ export class UserProviderService {
                 const user = await userModel.getById(user_id);
                 if(!user) throw new ServiceError("Usuario no encontrado.");
                 
-                const user_provider = await userModel.getById(user_id);
+                const user_provider = await userModel.getById(service_provider_id);
                 if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.");
 
                 const rowCount = await favModel.delete(user_id, service_provider_id);

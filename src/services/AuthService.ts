@@ -22,7 +22,7 @@ export class AuthService {
                     if (await bc.compare(password, _user.password)) {
 
                         const token = jwt.sign({
-                            userId: _user.id
+                            user_id: _user.id
                         }, process.env.JWT_SECRET!, {
                             expiresIn: "24h"
                         });

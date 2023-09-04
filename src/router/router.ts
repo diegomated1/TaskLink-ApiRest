@@ -265,7 +265,7 @@ class RouterDesc {
                         route.route.tags.push(controllerName)
                         const { middlewares, validators, ...data } = route.route;
                         this.#swaggerDocument.paths[routePath][method] = data;
-                        let expressPath = routePath.replace('{', ':').replace('}', '');
+                        let expressPath = routePath.replace(/\{/g, ':').replace(/\}/g, '');
                         let routeMiddlewares = route.route.middlewares || [];
 
                         let  _middlewares: ExpressMiddlewareType[] = []

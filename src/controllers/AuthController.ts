@@ -61,16 +61,15 @@ export class AuthController {
     }
   }
 
-  @Post("/verify-email-code/{userId}")
+  @Post("/verify-email-code")
   @Authorize()
-  @FromParam("userId")
   @FromBody("email_code")
   async verifyEmailCode(req: Request, res: Response, next: NextFunction) {
     try{
+      const { user_id } = res.locals;
       const { email_code } = req.body;
-      const { userId } = req.params;
 
-      await this.emailService.VerifyEmailCode(userId, email_code);
+      await this.emailService.VerifyEmailCode(user_id, email_code);
 
       res.Ok();
     }catch(error){

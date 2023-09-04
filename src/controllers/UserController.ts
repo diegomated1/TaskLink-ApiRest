@@ -24,14 +24,14 @@ export class UserController {
     }
   };
 
-  @Get("/{id_user}")
-  @FromParam("id_user")
+  @Get("/{user_id}")
+  @FromParam("user_id")
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id_user } = req.params;
-      if (!validate(id_user)) return res.Failed("Id de usuario no valido.");
+      const { user_id } = req.params;
+      if (!validate(user_id)) return res.Failed("Id de usuario no valido.");
 
-      const user = await this.userService.getById(id_user);
+      const user = await this.userService.getById(user_id);
 
       (user)
         ? res.Ok(user)
@@ -41,14 +41,14 @@ export class UserController {
     }
   };
 
-  @Put("/{id_user}")
-  @FromHeader("Authorization") @FromParam("id_user") @FromBody("User", UserPutValidator)
+  @Put()
+  @FromBody("User", UserPutValidator)
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id_user } = req.params;
+      const { user_id } = res.locals;
       const { User } = req.body;
 
-      const _user = await this.userService.update(id_user, User);
+      const _user = await this.userService.update(user_id, User);
 
       (_user)
         ? res.Ok(_user)
@@ -58,12 +58,11 @@ export class UserController {
     }
   };
 
-  @Delete("/{id_user}")
-  @FromParam("id_user")
+  @Delete()
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id_user } = req.params;
-      const result = await this.userService.delete(id_user);
+      const { user_id } = res.locals;
+      const result = await this.userService.delete(user_id);
       (result)
         ? res.Ok()
         : res.Failed();
@@ -85,13 +84,12 @@ export class UserController {
     }
   }
 
-  @Post("/{id_user}/reset-password")
-  @FromParam("id_user") @FromBody("email_code") @FromBody("new_password")
+  @Post("/reset-password")
+  @FromBody("email") @FromBody("email_code") @FromBody("new_password")
   async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id_user } = req.params;
-      const { email_code, new_password } = req.body;
-      await this.userService.resetPassword(id_user, email_code, new_password);
+      const { email, email_code, new_password } = req.body;
+      await this.userService.resetPassword(email, email_code, new_password);
       
       res.Ok()
     } catch (error) {

@@ -1,9 +1,10 @@
 import { UserProviderService } from "../services/UserProviderService";
-import { Controller, FromParam, Path } from "../router/router";
+import { AuthorizeAll, Controller, FromParam, Path } from "../router/router";
 import { Response, Request, NextFunction } from "express";
 
 
 @Controller()
+@AuthorizeAll()
 export class UserProviderController {
 
     constructor(
@@ -11,13 +12,12 @@ export class UserProviderController {
     ) {
     }
 
-    @Path("/{id_user}")
-    @FromParam("id_user")
+    @Path()
     async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id_user } = req.params;
+            const { user_id } = res.locals;
             
-            await this.userProviderService.request(id_user);
+            await this.userProviderService.request(user_id);
 
             res.Ok();
         } catch (error) {

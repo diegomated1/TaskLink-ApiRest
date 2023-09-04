@@ -12,9 +12,9 @@ export const AuthMiddleware = async (req: Request, res: Response, next: NextFunc
 
         var token = token_bearer[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-        if(!decoded.userId) throw new ServiceError("Token invalido.");
-        
-        res.locals.userId = decoded.userId;
+        if(!decoded.user_id) throw new ServiceError("Token invalido.");
+
+        res.locals.user_id = decoded.user_id;
         next();
     } catch (error) {
         next(error);

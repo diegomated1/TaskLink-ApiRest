@@ -13,6 +13,7 @@ import { Conection } from './database/Conection';
 import { UserProviderService } from './services/UserProviderService';
 import { UserProviderController } from './controllers/UserProviderController';
 import { EmailService } from './services/EmailService';
+import { FavoriteController } from './controllers/FavoriteController';
 
 function main(): App {
 
@@ -33,9 +34,13 @@ function main(): App {
     const emailService = new EmailService(conection);
     new AuthController(authService, emailService, userService);
 
-    // Auth
+    // Provider
     const userProviderService = new UserProviderService(conection);
     new UserProviderController(userProviderService);
+
+    // Favorite
+    new FavoriteController(userProviderService);
+
 
     router.addAuthMiddleware(AuthMiddleware);
     router.addService(userService);

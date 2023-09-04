@@ -88,24 +88,25 @@ CREATE TABLE IF NOT EXISTS dbo."Configuracion"(
 CREATE TABLE IF NOT EXISTS dbo."OffertStatus"(
 	id SERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(20) NOT NULL,
-    description VARCHAR(255) NOT NULL
+    description VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS dbo."Offert"(
 	id SERIAL PRIMARY KEY NOT NULL,
-    created_fate DATE NOT NULL,
+    created_date DATE NOT NULL,
     agended_date DATE NOT NULL,
     user_id UUID NOT NULL,
     service_id INT NOT NULL,
-    statusId INT NOT NULL,
+    status_id INT NOT NULL,
     price DECIMAL NOT NULL,
     user_location POINT NOT NULL,
     user_provider_location POINT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES dbo."User"(id),
     FOREIGN KEY (service_id) REFERENCES dbo."Service"(id),
-    FOREIGN KEY (statusId) REFERENCES dbo."OffertStatus"(id)
+    FOREIGN KEY (status_id) REFERENCES dbo."OffertStatus"(id)
 );
 
+INSERT INTO dbo."OffertStatus"(name) VALUES ('Creado'), ('En curso'), ('Completado'), ('Cancelado');
 
 INSERT INTO dbo."Role"(name) VALUES ('usuario'), ('admin');
 

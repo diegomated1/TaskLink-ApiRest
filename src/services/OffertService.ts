@@ -101,4 +101,35 @@ export class OffertService {
         });
     };
 
+    acceptOffert =  (user_id: string, offert_id: string, status_id: number) => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const offertModel = new OffertModel(client);
+            try {
+                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+
+                if (!offertCheck)
+                    throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
+
+                if(offertCheck.status_id == 2)
+                    throw new ServiceError("La oferta ya fue aceptada.");
+                else if(offertCheck.status_id == 5)
+                    throw new ServiceError("La oferta ya fue rechazada.");
+
+                const offert = await offertModel.update(offert_id, {
+                    status_id
+                });
+
+                if (!offert)
+                    throw new ServiceError("No se pudo actualizar la oferta.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+                await this.conection.commit(client);
+                res(offert);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    };
+
 }

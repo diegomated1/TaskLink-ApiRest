@@ -41,6 +41,23 @@ export class OffertModel {
         });
     };
 
+    getByIdByServiceProvider = (id: string, user_id: string): Promise<Offert | null> => {
+        return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
+            try {
+                const query = `SELECT * FROM dbo."Offert" o 
+                INNER JOIN dbo."Service" s ON s.id = o.service_id
+                WHERE o.id = $1 AND s.user_id = $2`;
+                const values = [id, user_id];
+                const result = await this.client.query<Offert>(query, values);
+                const offert = result.rows[0];
+                res(offert);
+            } catch (error) {
+                rej(error);
+            }
+        });
+    };
+
     insert = (offert: Partial<Offert>): Promise<Offert | null> => {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");

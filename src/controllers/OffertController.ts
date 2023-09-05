@@ -45,7 +45,6 @@ export class OffertController {
 
             res.Ok(aggendedOfferts);
         } catch (error) {
-            console.log(error)
             next(error);
         }
     };
@@ -65,7 +64,6 @@ export class OffertController {
 
             res.Ok(aggendedOfferts);
         } catch (error) {
-            console.log(error)
             next(error);
         }
     };
@@ -83,8 +81,38 @@ export class OffertController {
 
             res.Ok(aggendedOfferts);
         } catch (error) {
-            console.log(error)
             next(error);
         }
     };
+
+    @Path("/{offert_id}/accept")
+    @FromParam("offert_id")
+    async acceptOffert(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            const { offert_id } = req.params;
+
+            const aggendedOfferts = await this.offertService.acceptOffert(user_id, offert_id, 2);
+
+            res.Ok(aggendedOfferts);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    @Path("/{offert_id}/reject")
+    @FromParam("offert_id")
+    async cancelOffert(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            const { offert_id } = req.params;
+
+            const aggendedOfferts = await this.offertService.acceptOffert(user_id, offert_id, 5);
+
+            res.Ok(aggendedOfferts);
+        } catch (error) {
+            next(error);
+        }
+    };
+
 }

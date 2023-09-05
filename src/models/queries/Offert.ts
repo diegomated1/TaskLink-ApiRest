@@ -25,5 +25,8 @@ INNER JOIN dbo."User" u ON u.id = s.user_id
 INNER JOIN dbo."IdentificationType" it ON it.id = u.identification_type_id
 INNER JOIN dbo."Role" r ON r.id = u.role_id
 WHERE o.user_id = $1 AND ($2::integer IS NULL OR o.status_id = $2::integer)
-ORDER BY agended_date ASC
-LIMIT $3 OFFSET $4;`;
+ORDER BY
+    CASE WHEN $3 = 'ASC' THEN o.price END ASC,
+    CASE WHEN $3 = 'DESC' THEN o.price END DESC,
+    agended_date DESC
+LIMIT $4 OFFSET $5;`;

@@ -31,19 +31,17 @@ export class OffertController {
     }
 
     @Get()
-    @FromQuery("page") @FromQuery("rows") @FromQuery("status_id")
+    @FromQuery("page") @FromQuery("rows") @FromQuery("status_id") @FromQuery("price")
     async getOfferts(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            let { page, rows, status_id } = req.query;
-            let _page: number | undefined;
-            let _rows: number | undefined;
-            let _status_id: number | undefined;
-            if(page) _page = parseInt(page.toString());
-            if(rows) _rows = parseInt(rows.toString());
-            if(status_id) _status_id = parseInt(status_id.toString());
+            let { page, rows, status_id, price } = req.query;
+            const _page = page ? parseInt(page.toString()) : undefined;
+            const _rows = rows ? parseInt(rows.toString()) : undefined;
+            const _status_id = status_id ? parseInt(status_id.toString()) : undefined;
+            const _price = price ? price.toString() : undefined;
             
-            const aggendedOfferts = await this.offertService.getByPage(user_id, _page, _rows, _status_id);
+            const aggendedOfferts = await this.offertService.getByPage(user_id, _page, _rows, _status_id, _price);
 
             res.Ok(aggendedOfferts);
         } catch (error) {

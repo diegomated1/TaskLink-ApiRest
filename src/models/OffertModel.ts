@@ -59,13 +59,13 @@ export class OffertModel {
         });
     };
 
-    getAllByUserAgended = (user_id: string, page: number, rows: number, status_id?: number): Promise<OffertGet[]> => {
+    getAllByUserAgended = (user_id: string, page: number, rows: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const query =  QUERYagendedOffertsByUser;
                 const offset = ((page-1) * rows);
-                const values = [user_id, status_id, rows, offset];
+                const values = [user_id, status_id, price, rows, offset];
                 
                 const result = await this.client.query<OffertGet>(query, values);
                 const user = result.rows;

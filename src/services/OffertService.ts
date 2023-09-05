@@ -4,6 +4,7 @@ import { OffertModel } from "../models/OffertModel";
 import { OffertGet } from "../interfaces/queries/Offert";
 import { ServiceError } from "../utils/errors/service.error";
 import { HttpStatusCode } from "../router/RouterTypes";
+import { number } from "joi";
 
 export class OffertService {
 
@@ -38,7 +39,7 @@ export class OffertService {
         });
     }
 
-    getByPage = (email: string, page?: number, rows?: number, status_id?: number): Promise<OffertGet[]> => {
+    getByPage = (email: string, page?: number, rows?: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const offertModel = new OffertModel(client);
@@ -46,7 +47,7 @@ export class OffertService {
                 page = Math.abs(page ?? 1);
                 rows = Math.abs(rows ?? 10);
 
-                const _offerts = await offertModel.getAllByUserAgended(email, page, rows, status_id);
+                const _offerts = await offertModel.getAllByUserAgended(email, page, rows, status_id, price);
 
                 await this.conection.commit(client);
                 res(_offerts);

@@ -20,3 +20,9 @@ export const OffertPostValidator = joi.object<Offert>({
                 "any.required": "El servicio es requerido."
             }),
 });
+
+
+export const OffertPutValidator = joi.object<Offert>({
+    price: joi.number(),
+    agended_date: joi.date()
+});

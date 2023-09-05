@@ -161,7 +161,7 @@ class RouterDesc {
             })
         }
         
-        this.#routeParameters.forEach((param, i) => {
+        this.#routeParameters.reverse().forEach((param, i) => {
             if (param.in == Param.body && param.schema && param.schemaName) {
                 if (_route.requestBody == null) {
                     _route.requestBody = {
@@ -183,7 +183,7 @@ class RouterDesc {
             }
         });
         _route.parameters = _route.parameters?.filter(r=>r.in != Param.body);
-    
+        
         this.#routes.push({ route: _route, path, routerDecorationsFunctions, method });
         this.#expressRouteresponses = {}
         this.#routeParameters = []

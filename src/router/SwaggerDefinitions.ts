@@ -6,11 +6,11 @@ export const swaggerDefinitions: JsonObject = {
     title: 'PROYECTO INTEGRADOR 3',
     version: '1.0.0',
   },
-  servers: [
-    {
-      url: "http://tasklink.eastus.cloudapp.azure.com"
-    }
-  ],
+  servers: [],
+  //  {
+  //    url: "http://tasklink.eastus.cloudapp.azure.com"
+  //  }
+  //],
   components: {
     securitySchemes: {
       bearerAuth: {

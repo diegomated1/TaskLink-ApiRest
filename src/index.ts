@@ -16,6 +16,8 @@ import { EmailService } from './services/EmailService';
 import { FavoriteController } from './controllers/FavoriteController';
 import { ServiceController } from './controllers/ServiceController';
 import { ServiceService } from './services/ServiceService';
+import { OffertController } from './controllers/OffertController';
+import { OffertService } from './services/OffertService';
 
 import { types } from 'pg'
 types.setTypeParser(1700, function (val) {
@@ -38,6 +40,7 @@ function main(): App {
     const emailService = new EmailService(conection);
     const userProviderService = new UserProviderService(conection);
     const serviceService = new ServiceService(conection);
+    const offertService = new OffertService(conection);
 
     // Controllers
     new UserController(userService);
@@ -45,7 +48,7 @@ function main(): App {
     new UserProviderController(userProviderService);
     new FavoriteController(userProviderService);
     new ServiceController(serviceService);
-
+    new OffertController(offertService);
 
     router.addAuthMiddleware(AuthMiddleware);
     router.addService(userService);
@@ -53,6 +56,7 @@ function main(): App {
     router.addService(userProviderService);
     router.addService(emailService);
     router.addService(serviceService);
+    router.addService(offertService);
 
     const app = new App(router.Router(), database);
     app.start();

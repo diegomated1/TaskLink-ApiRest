@@ -1,9 +1,7 @@
-import { UserModel } from "../models/UserModel";
-import { ServiceError } from "../utils/errors/service.error";
-import { HttpStatusCode } from "../router/RouterTypes";
+import { Service } from "interfaces/Service";
 import { Conection } from "../database/Conection";
-import { Email } from "../utils/services/emailService";
-import { ServiceModel } from "models/OffertModel";
+import { ServiceModel } from "../models/ServiceModel";
+import { ServiceGet } from "interfaces/queries/Services";
 
 export class ServiceService {
 
@@ -11,19 +9,16 @@ export class ServiceService {
         private readonly conection: Conection
     ) { }
 
-    GetAgendedOfferts = (email: string, page?: number, rows?: number): Promise<void> => {
+    getAllByUser = (user_id: string): Promise<ServiceGet[]> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const serviceModel = new ServiceModel(client);
             try {
-                page = page ? page - 1 : 0;
-                rows = rows ?? 10;
 
-                const _user = await serviceModel.getAllByUserAgended(email, page, rows);
-
+                const _services = await serviceModel.getAllByUser(user_id);
 
                 await this.conection.commit(client);
-                res();
+                res(_services);
             } catch (error) {
                 await this.conection.rollback(client);
                 rej(error)
@@ -31,4 +26,31 @@ export class ServiceService {
         });
     }
 
+    insert = (user_id: string, service: Partial<Service>): Promise<Service | null> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const serviceModel = new ServiceModel(client);
+            try {
+
+                const new_service: Omit<Service, "id"> = {
+                    calification: 5,
+                    calification_acu: 0,
+                    calification_count: 0,
+                    category_id: service.category_id!,
+                    description: service.description!,
+                    price: service.price!,
+                    user_id
+                }
+
+                const _service = await serviceModel.insert(new_service);
+
+                await this.conection.commit(client);
+                res(_service);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    }
+    
 }

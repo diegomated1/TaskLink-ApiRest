@@ -5,7 +5,7 @@ import { Database } from './database/database';
 import router from './router/router';
 import App from './app';
 import { UserController } from './controllers/UserController';
-import { UserService } from './services/UserService'; 
+import { UserService } from './services/UserService';
 import { AuthService } from './services/AuthService';
 import { AuthController } from './controllers/AuthController';
 import { AuthMiddleware } from './middlewares/AuthMiddleware';
@@ -14,6 +14,13 @@ import { UserProviderService } from './services/UserProviderService';
 import { UserProviderController } from './controllers/UserProviderController';
 import { EmailService } from './services/EmailService';
 import { FavoriteController } from './controllers/FavoriteController';
+import { ServiceController } from './controllers/ServiceController';
+import { ServiceService } from './services/ServiceService';
+
+import { types } from 'pg'
+types.setTypeParser(1700, function (val) {
+    return parseFloat(val);
+});
 
 function main(): App {
 
@@ -25,21 +32,19 @@ function main(): App {
 
     const conection = new Conection(database);
 
-    // User
+    // Services
     const userService = new UserService(conection);
-    new UserController(userService);
-
-    // Auth
     const authService = new AuthService(conection);
     const emailService = new EmailService(conection);
-    new AuthController(authService, emailService, userService);
-
-    // Provider
     const userProviderService = new UserProviderService(conection);
-    new UserProviderController(userProviderService);
+    const serviceService = new ServiceService(conection);
 
-    // Favorite
+    // Controllers
+    new UserController(userService);
+    new AuthController(authService, emailService, userService);
+    new UserProviderController(userProviderService);
     new FavoriteController(userProviderService);
+    new ServiceController(serviceService);
 
 
     router.addAuthMiddleware(AuthMiddleware);
@@ -47,6 +52,7 @@ function main(): App {
     router.addService(authService);
     router.addService(userProviderService);
     router.addService(emailService);
+    router.addService(serviceService);
 
     const app = new App(router.Router(), database);
     app.start();

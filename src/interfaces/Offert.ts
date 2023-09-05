@@ -1,4 +1,4 @@
-interface Offert {
+export interface Offert {
     id: number;
     created_date: Date;
     agended_date: Date;

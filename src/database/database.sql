@@ -53,7 +53,9 @@ CREATE TABLE IF NOT EXISTS dbo."Service"(
 	id SERIAL PRIMARY KEY NOT NULL,
     price DECIMAL NOT NULL,
     calification DECIMAL NOT NULL,
+    calification_acu DECIMAL NOT NULL,
     calification_count INT NOT NULL,
+    description varchar(255),
     category_id INT NOT NULL,
     user_id UUID NOT NULL,
     FOREIGN KEY (user_id) REFERENCES dbo."User"(id),
@@ -99,12 +101,14 @@ CREATE TABLE IF NOT EXISTS dbo."Offert"(
     service_id INT NOT NULL,
     status_id INT NOT NULL,
     price DECIMAL NOT NULL,
-    user_location POINT NOT NULL,
-    user_provider_location POINT NOT NULL,
+    user_location POINT,
+    user_provider_location POINT,
     FOREIGN KEY (user_id) REFERENCES dbo."User"(id),
     FOREIGN KEY (service_id) REFERENCES dbo."Service"(id),
     FOREIGN KEY (status_id) REFERENCES dbo."OffertStatus"(id)
 );
+
+INSERT INTO dbo."Category"(name) VALUES ('Aseo'), ('Informatica'), ('Transporte');
 
 INSERT INTO dbo."OffertStatus"(name) VALUES ('Creado'), ('En curso'), ('Completado'), ('Cancelado');
 

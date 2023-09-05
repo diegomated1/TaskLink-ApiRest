@@ -39,7 +39,7 @@ export class OffertService {
         });
     }
 
-    getByPage = (email: string, page?: number, rows?: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
+    getMyOfferts = (email: string, page?: number, rows?: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const offertModel = new OffertModel(client);
@@ -47,7 +47,26 @@ export class OffertService {
                 page = Math.abs(page ?? 1);
                 rows = Math.abs(rows ?? 10);
 
-                const _offerts = await offertModel.getAllByUserAgended(email, page, rows, status_id, price);
+                const _offerts = await offertModel.getMyOfferts(email, page, rows, status_id, price);
+
+                await this.conection.commit(client);
+                res(_offerts);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    }
+
+    getOfferts = (email: string, page?: number, rows?: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const offertModel = new OffertModel(client);
+            try {
+                page = Math.abs(page ?? 1);
+                rows = Math.abs(rows ?? 10);
+
+                const _offerts = await offertModel.getOfferts(email, page, rows, status_id, price);
 
                 await this.conection.commit(client);
                 res(_offerts);

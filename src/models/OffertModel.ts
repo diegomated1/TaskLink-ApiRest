@@ -3,7 +3,7 @@ import { Service } from '../interfaces/Service';
 import { Offert } from '../interfaces/Offert';
 import { PoolClient } from 'pg';
 import { OffertGet } from '../interfaces/queries/Offert';
-import { QUERYagendedOffertsByUser } from './queries/Offert';
+import { QUEEY_offerts, QUERY_myOfferts } from './queries/Offert';
 
 export class OffertModel {
     
@@ -59,11 +59,28 @@ export class OffertModel {
         });
     };
 
-    getAllByUserAgended = (user_id: string, page: number, rows: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
+    getMyOfferts = (user_id: string, page: number, rows: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query =  QUERYagendedOffertsByUser;
+                const query =  QUERY_myOfferts;
+                const offset = ((page-1) * rows);
+                const values = [user_id, status_id, price, rows, offset];
+                
+                const result = await this.client.query<OffertGet>(query, values);
+                const user = result.rows;
+                res(user);
+            } catch (error) {
+                rej(error);
+            }
+        });
+    };
+
+    getOfferts = (user_id: string, page: number, rows: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
+        return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
+            try {
+                const query =  QUEEY_offerts;
                 const offset = ((page-1) * rows);
                 const values = [user_id, status_id, price, rows, offset];
                 

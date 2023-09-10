@@ -23,6 +23,22 @@ export class UserController {
       next(error);
     }
   };
+  
+  @Get("/token")
+  async getUserByToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user_id } = res.locals;
+      if (!validate(user_id)) return res.Failed("Id de usuario no valido.");
+
+      const user = await this.userService.getById(user_id);
+
+      (user)
+        ? res.Ok(user)
+        : res.NotFound("Usuario no encontrado.");
+    } catch (error) {
+      next(error);
+    }
+  };
 
   @Get("/{user_id}")
   @FromParam("user_id")

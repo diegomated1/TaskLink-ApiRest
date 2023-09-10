@@ -41,7 +41,6 @@ export class ServiceController {
                 ? res.Ok(service)
                 : res.Failed("No se pudo crear el servicio.")
         } catch (error) {
-            console.log(error)
             next(error);
         }
     }

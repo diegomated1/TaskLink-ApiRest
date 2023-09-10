@@ -21,7 +21,6 @@ export class FavoriteController {
 
             res.Ok(favorites);
         } catch (error) {
-            console.log(error)
             next(error);
         }
     }
@@ -56,7 +55,6 @@ export class FavoriteController {
                 ? res.Ok()
                 : res.Failed("No se pudo eliminar de favoritos.");
         } catch (error) {
-            console.log(error)
             next(error);
         }
     }

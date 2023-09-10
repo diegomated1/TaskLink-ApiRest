@@ -4,9 +4,11 @@ select
     JSON_BUILD_OBJECT(
         'price', s.price,
         'calification', s.calification,
-        'category', c.name
+        'category', c.name,
+        'description', s.description
     ) as service,
     JSON_BUILD_OBJECT(
+        'id', u.id,
         'identification_type_id', it.id,
         'identification_type', it.name,
         'identification', u.identification,
@@ -38,9 +40,11 @@ select
     JSON_BUILD_OBJECT(
         'price', s.price,
         'calification', s.calification,
-        'category', c.name
+        'category', c.name,
+        'description', s.description
     ) as service,
     JSON_BUILD_OBJECT(
+        'id', u.id,
         'identification_type_id', it.id,
         'identification_type', it.name,
         'identification', u.identification,

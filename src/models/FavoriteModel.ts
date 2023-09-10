@@ -1,7 +1,8 @@
-import { Favorite } from 'interfaces/Favorite';
+import { Favorite } from '../interfaces/Favorite';
 import { ServiceError } from '../utils/errors/service.error';
 import { User } from '../interfaces/User';
 import { PoolClient } from 'pg';
+import { QUERY_favorites } from './queries/Favorite';
 
 export class FavoriteModel {
 
@@ -30,11 +31,7 @@ export class FavoriteModel {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query =  `SELECT u.*, r.name as role, it.name as identification_type FROM dbo."Favorite" f 
-                                INNER JOIN dbo."User" u on u.id = f.service_provider_id 
-                                INNER JOIN dbo."Role" r on r.id = u.role_id
-                                INNER JOIN dbo."IdentificationType" it on it.id = u.identification_type_id
-                                WHERE f.user_id = $1`;
+                const query = QUERY_favorites;
                 const values = [id];
                 const result = await this.client.query<User>(query, values);
                 const favorites = result.rows;

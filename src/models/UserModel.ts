@@ -12,7 +12,12 @@ export class UserModel {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query = 'SELECT * FROM dbo."User" WHERE id = $1';
+                const query = `
+                    SELECT u.*, it.name as identification_type, r.name as role FROM dbo."User" u 
+                    INNER JOIN dbo."IdentificationType" it ON it.id = u.identification_type_id
+                    INNER JOIN dbo."Role" r ON r.id = u.role_id
+                    WHERE u.id = $1
+                `;
                 const values = [id];
                 const result = await this.client.query<User>(query, values);
                 const user = result.rows[0];

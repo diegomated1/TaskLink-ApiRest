@@ -59,7 +59,6 @@ export class ServiceModel {
                 const _user = result.rows[0];
                 res(_user);
             } catch (error) {
-                console.log(error)
                 rej(error);
             }
         });

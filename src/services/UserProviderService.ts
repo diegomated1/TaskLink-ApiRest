@@ -60,10 +60,10 @@ export class UserProviderService {
             const favModel = new FavoriteModel(client);
             try {
                 const user = await userModel.getById(user_id);
-                if(!user) throw new ServiceError("Usuario no encontrado.");
+                if(!user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
                 
                 const user_provider = await userModel.getById(service_provider_id);
-                if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.");
+                if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.", HttpStatusCode.NOT_FOUND);
 
                 const _favorite = await favModel.getOne(user_id, service_provider_id);
                 if(_favorite) throw new ServiceError("Favorito ya agregado.");
@@ -85,10 +85,10 @@ export class UserProviderService {
             const favModel = new FavoriteModel(client);
             try {
                 const user = await userModel.getById(user_id);
-                if(!user) throw new ServiceError("Usuario no encontrado.");
+                if(!user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
                 
                 const user_provider = await userModel.getById(service_provider_id);
-                if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.");
+                if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.", HttpStatusCode.NOT_FOUND);
 
                 const rowCount = await favModel.delete(user_id, service_provider_id);
                 await this.conection.commit(client);

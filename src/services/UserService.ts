@@ -76,7 +76,7 @@ export class UserService {
                 if (!_settings) throw new ServiceError("Error al crear el usuario.", HttpStatusCode.BAD_REQUEST);
 
                 const token = jwt.sign({
-                    userId: _user.id,
+                    user_id: _user.id,
                 }, process.env.JWT_SECRET!, {
                     expiresIn: "24h"
                 });

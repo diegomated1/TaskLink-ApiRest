@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { User } from '../interfaces/User';
 import { Conection } from '../database/Conection';
 import { Email } from '../utils/services/emailService';
+import { SettingsModel } from '../models/SettinsModel';
 
 export class UserService {
 
@@ -48,6 +49,7 @@ export class UserService {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const userModel = new UserModel(client);
+            const settingsModel = new SettingsModel(client);
             try {
                 const _userCheck = await userModel.getByEmail(entity.email);
                 if (_userCheck) throw new ServiceError("El correo ya se encuentra en uso.")
@@ -64,17 +66,22 @@ export class UserService {
                     role_id: 1, email_code: null, email_code_generate: null, provider: false
                 }
                 const _user = await userModel.insert(user);
-                if (_user) {
-                    const token = jwt.sign({
-                        userId: _user.id,
-                    }, process.env.JWT_SECRET!, {
-                        expiresIn: "24h"
-                    });
-                    await this.conection.commit(client);
-                    res(token);
-                } else {
-                    throw new ServiceError("La cedula ya se encuentra en uso.", HttpStatusCode.BAD_REQUEST);
-                }
+                if (!_user) throw new ServiceError("Error al crear el usuario.", HttpStatusCode.BAD_REQUEST);
+
+                const _settings = await settingsModel.insert({
+                    promotion_notification: true,
+                    system_notification: true,
+                    user_id: _user.id
+                });
+                if (!_settings) throw new ServiceError("Error al crear el usuario.", HttpStatusCode.BAD_REQUEST);
+
+                const token = jwt.sign({
+                    userId: _user.id,
+                }, process.env.JWT_SECRET!, {
+                    expiresIn: "24h"
+                });
+                await this.conection.commit(client);
+                res(token);
             } catch (error) {
                 await this.conection.rollback(client);
                 rej(error)

@@ -116,10 +116,17 @@ INSERT INTO dbo."Role"(name) VALUES ('usuario'), ('admin');
 
 INSERT INTO dbo."IdentificationType"(name) VALUES ('CC'), ('Pasaporte');
 
+
 INSERT INTO dbo."User"(id, identification, identification_type_id, fullname, email, email_verified, provider, registration_date, phone, birthdate, password, role_id) VALUES 
 	('97f99c61-a665-4eb5-9dd1-799fd82ffd34'::UUID, '1001369364', 1, 'Diego Cardenas', 'diegodaco08@gmail.com', false, false, CURRENT_TIMESTAMP, '573173887502', '2002-10-15', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1),
 	('1dde026b-8b82-49b9-a9ed-1ed2d7208e83'::UUID, '9647637690636008', 1, 'Diego Cardenas', 'diegodaco09@gmail.com', false, false, CURRENT_TIMESTAMP, '573173887502', '2002-10-15', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1),
 	('1dde026b-8b82-49b9-a9ed-1ed2d7208e86'::UUID, '9647637690636009', 1, 'Diego Cardenas', 'god@gmail.com', false, false, CURRENT_TIMESTAMP, '573173887502', '2002-10-15', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1);
+
+INSERT INTO dbo."Configuracion"(system_notification, promotion_notification, user_id) VALUES
+    (true::BOOL, true::BOOL, '97f99c61-a665-4eb5-9dd1-799fd82ffd34'::UUID) ,
+    (true::BOOL, true::BOOL, '1dde026b-8b82-49b9-a9ed-1ed2d7208e83'::UUID) ,
+    (true::BOOL, true::BOOL, '1dde026b-8b82-49b9-a9ed-1ed2d7208e86'::UUID);
+
 
 SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'TaskLinkDev' AND pid <> pg_backend_pid();
 DROP DATABASE IF EXISTS "TaskLinkDev";

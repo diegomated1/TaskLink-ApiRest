@@ -11,6 +11,7 @@ export interface OffertGet {
         category: string;
     }
     user_provider_service: {
+        id: string;
         identification: string;
         fullname: string;
         email: string;

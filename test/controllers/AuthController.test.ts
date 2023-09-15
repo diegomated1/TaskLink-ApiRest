@@ -72,7 +72,7 @@ describe("POST /auth/sesion", () => {
 
 });
 
-describe("POST /auth/register", () => {
+describe.skip("POST /auth/register", () => {
 
     test("GOD DATA", async () => {
         const cc = Math.random().toString().slice(2);

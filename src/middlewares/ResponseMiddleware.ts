@@ -40,8 +40,8 @@ declare global {
 
 export function Responses(request: Request, response: Response, nextFunction: NextFunction) {
 
-    response.Ok = <T>(value: T, httpStatusCode = HttpStatusCode.OK) => {
-        const res: GlobalResponse<T> = {
+    response.Ok = <T>(value: T | null = null, httpStatusCode = HttpStatusCode.OK) => {
+        const res: GlobalResponse<T | null> = {
             value,
             errors: [],
             success: true

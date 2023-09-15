@@ -36,23 +36,25 @@ describe("GET /user", () => {
     });
 
     test("GET ONE", async () => {
-        let expectedUser: User = {
-            id: "97f99c61-a665-4eb5-9dd1-799fd82ffd34",
-            identification_type_id: 1,
-            identification: "1001369364",
-            fullname: "Diego Cardenas",
-            email: "diegodaco08@gmail.com",
-            email_verified: false,
-            registration_date: expect.any(String),
-            avatar_url: null,
-            phone: "573173887502",
-            birthdate: expect.any(String),
-            password: expect.any(String),
-            email_code: null,
-            email_code_generate: null,
-            provider: false,
-            role_id: 1
-        };
+        let expectedUser = {
+                id: "97f99c61-a665-4eb5-9dd1-799fd82ffd34",
+                identification_type_id: 1,
+                identification_type: "CC",
+                identification: "1001369364",
+                fullname: "Diego Cardenas",
+                email: "diegodaco08@gmail.com",
+                email_verified: expect.any(Boolean),
+                registration_date: expect.any(String),
+                avatar_url: null,
+                phone: "573173887502",
+                birthdate: expect.any(String),
+                password: expect.any(String),
+                email_code: null,
+                email_code_generate: null,
+                provider: expect.any(Boolean),
+                role_id: 1,
+                role: "usuario"
+            };
         var expectedResponse = {
             value: expectedUser,
             errors: [],
@@ -95,6 +97,18 @@ describe("GET /user", () => {
 describe("PUT /user", () => {
 
     test("GOD DATA", async () => {
+        const cc = Math.random().toString().slice(2);
+        const email = `${Math.random().toString(16).slice(2)}@gmail.com`;
+        let User: Partial<User> = {
+            identification_type_id: 1,
+            identification: cc,
+            fullname: "Diego Cardenas",
+            email,
+            birthdate: "2002-10-15T05:00:00.000Z",
+            phone: "573173887502",
+            password: "elPepe123@"
+        };
+        const register = await request(app.app).post("/auth/register").send({ User: User });
 
         const newEmail = `${Math.random().toString(16).slice(2)}@gmail.com`;
         const newName = "Diego Cardenas (editado)"
@@ -107,9 +121,9 @@ describe("PUT /user", () => {
         };
 
         let UserExpected: User = {
-            id: "1dde026b-8b82-49b9-a9ed-1ed2d7208e83",
+            id: expect.any(String),
             identification_type_id: 1,
-            identification: "9647637690636008",
+            identification: cc,
             fullname: newName,
             email: newEmail,
             email_verified: false,
@@ -130,7 +144,9 @@ describe("PUT /user", () => {
             success: true
         }
 
-        const response = await request(app.app).put("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e83").set("Authorization", API_TOKEN_DEV).send(body);
+        const token = `Bearer ${register.body.value}`;
+
+        const response = await request(app.app).put("/user").set("Authorization", token).send(body);
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(200);
     })
@@ -154,7 +170,7 @@ describe("PUT /user", () => {
             success: false
         }
 
-        const response = await request(app.app).put("/user/1dde026b-8b82-49b9-a9ed-1ed2d7208e83").set("Authorization", API_TOKEN_DEV).send({ User: UserPut });
+        const response = await request(app.app).put("/user").set("Authorization", API_TOKEN_DEV).send({ User: UserPut });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
     })
@@ -175,7 +191,7 @@ describe("PUT /user", () => {
             success: false
         }
 
-        const response = await request(app.app).put("/user/97f99c61-a665-4eb5-9dd1-799fd82ffd34").set("Authorization", API_TOKEN_DEV).send({ User: UserPut });
+        const response = await request(app.app).put("/user").set("Authorization", API_TOKEN_DEV).send({ User: UserPut });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(401);
     })

@@ -1,7 +1,6 @@
 import { ServiceError } from '../utils/errors/service.error';
 import { Service } from '../interfaces/Service';
 import { PoolClient } from 'pg';
-import { Category } from 'interfaces/Category';
 import { ServiceGet } from 'interfaces/queries/Services';
 
 export class ServiceModel {
@@ -10,14 +9,15 @@ export class ServiceModel {
         private readonly client?: PoolClient
     ) { }
 
-    getById = (id: string): Promise<ServiceGet | null> => {
+    getById = (id: number): Promise<ServiceGet | null> => {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query =  `SELECT s.id, s.price, s.calification, s.description, s.category_id, c.name AS category
+                const query =  `SELECT s.id, s.price, s.calification, s.calification_count, s.calification_acu, s.description, s.category_id, 
+                                s.user_id, c.name AS category
                                 FROM dbo."Service" s
                                 INNER JOIN dbo."Category" c ON c.id = s.category_id 
-                                WHERE id = $1`;
+                                WHERE s.id = $1`;
                 const values = [id];
                 const result = await this.client.query<ServiceGet>(query, values);
                 const user = result.rows[0];
@@ -58,6 +58,28 @@ export class ServiceModel {
                 const result = await this.client.query<Service>(query, values);
                 const _user = result.rows[0];
                 res(_user);
+            } catch (error) {
+                rej(error);
+            }
+        });
+    };
+
+    update = (service_id: number, entity: Partial<Service>): Promise<Service | null> => {
+        return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
+            try {
+                const updateClauses = Object.entries(entity)
+                    .map(([key, value], i) => `"${key}" = $${i + 1}`)
+                    .join(', ');
+
+                const query = `UPDATE dbo."Service" s SET ${updateClauses} WHERE s.Id = $${Object.keys(entity).length + 1} RETURNING *`;
+
+                const values = [...Object.values(entity), service_id];
+
+                const result = await this.client.query<Service>(query, values);
+                const _service = result.rows[0];
+
+                res(_service);
             } catch (error) {
                 rej(error);
             }

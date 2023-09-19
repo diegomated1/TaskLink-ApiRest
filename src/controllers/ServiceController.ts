@@ -1,4 +1,4 @@
-import { AuthorizeAll, Controller, FromBody, Get, Path, Post } from "../router/router";
+import { AuthorizeAll, Controller, FromBody, FromParam, Get, Path, Post } from "../router/router";
 import { Response, Request, NextFunction } from "express";
 import { ServiceService } from "../services/ServiceService";
 import { ServicePostValidator } from "../utils/validators/ServiceValidator";
@@ -10,8 +10,7 @@ export class ServiceController {
 
     constructor(
         private readonly serviceService: ServiceService
-    ) {
-    }
+    ) { }
 
     @Post()
     @FromBody("Service", ServicePostValidator)
@@ -41,6 +40,23 @@ export class ServiceController {
                 ? res.Ok(service)
                 : res.Failed("No se pudo crear el servicio.")
         } catch (error) {
+            next(error);
+        }
+    }
+
+    @Post("/{service_id}/rate")
+    @FromParam("service_id")
+    @FromBody("calification")
+    async rate(req: Request, res: Response, next: NextFunction) {
+        try{
+            const { user_id } = res.locals;
+            const { service_id } = req.params;
+            const { calification } = req.body;
+
+            const result = await this.serviceService.rate(user_id, parseFloat(service_id), calification);
+
+            res.Ok(result);
+        }catch(error){
             next(error);
         }
     }

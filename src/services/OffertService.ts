@@ -4,7 +4,7 @@ import { OffertModel } from "../models/OffertModel";
 import { OffertGet } from "../interfaces/queries/Offert";
 import { ServiceError } from "../utils/errors/service.error";
 import { HttpStatusCode } from "../router/RouterTypes";
-import { number } from "joi";
+import { StatusModel } from "../models/StatusModel";
 
 export class OffertService {
 
@@ -101,20 +101,22 @@ export class OffertService {
         });
     };
 
-    acceptOffert =  (user_id: string, offert_id: string, status_id: number) => {
+    changeOffertStatus =  (user_id: string, offert_id: string, status_id: number): Promise<Offert> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const offertModel = new OffertModel(client);
+            const statusModel = new StatusModel(client);
             try {
+                const status = await statusModel.getStatus(status_id);
+
+                if(!status || status_id == 1)
+                    throw new ServiceError("El estado no es valido.");
+
                 const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
 
                 if (!offertCheck)
                     throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
 
-                if(offertCheck.status_id == 2)
-                    throw new ServiceError("La oferta ya fue aceptada.");
-                else if(offertCheck.status_id == 5)
-                    throw new ServiceError("La oferta ya fue rechazada.");
 
                 const offert = await offertModel.update(offert_id, {
                     status_id

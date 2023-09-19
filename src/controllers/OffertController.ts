@@ -1,4 +1,4 @@
-import { AuthorizeAll, Controller, FromBody, FromParam, FromQuery, Get, Path, Post } from "../router/router";
+import { AuthorizeAll, Controller, FromBody, FromParam, FromQuery, Get, Path, Post, Put } from "../router/router";
 import { Response, Request, NextFunction } from "express";
 import { OffertPostValidator, OffertPutValidator } from "../utils/validators/OffertValidator";
 import { OffertService } from "../services/OffertService";
@@ -68,7 +68,7 @@ export class OffertController {
         }
     };
 
-    @Path("/{offert_id}")
+    @Put("/{offert_id}")
     @FromParam("offert_id")
     @FromBody("Offert", OffertPutValidator)
     async updateOffert(req: Request, res: Response, next: NextFunction) {
@@ -85,29 +85,15 @@ export class OffertController {
         }
     };
 
-    @Path("/{offert_id}/accept")
+    @Path("/{offert_id}/status/{status_id}")
     @FromParam("offert_id")
-    async acceptOffert(req: Request, res: Response, next: NextFunction) {
+    @FromParam("status_id")
+    async changeOffertStatus(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            const { offert_id } = req.params;
+            const { offert_id, status_id } = req.params;
 
-            const aggendedOfferts = await this.offertService.acceptOffert(user_id, offert_id, 2);
-
-            res.Ok(aggendedOfferts);
-        } catch (error) {
-            next(error);
-        }
-    };
-
-    @Path("/{offert_id}/reject")
-    @FromParam("offert_id")
-    async cancelOffert(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { user_id } = res.locals;
-            const { offert_id } = req.params;
-
-            const aggendedOfferts = await this.offertService.acceptOffert(user_id, offert_id, 5);
+            const aggendedOfferts = await this.offertService.changeOffertStatus(user_id, offert_id, parseInt(status_id));
 
             res.Ok(aggendedOfferts);
         } catch (error) {

@@ -13,5 +13,6 @@ export interface User {
   provider: boolean;
   email_code: number | null;
   email_code_generate: number | null;
+  available_days: string[];
   role_id: number;
 }

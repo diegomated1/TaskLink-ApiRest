@@ -1,5 +1,5 @@
 import { UserProviderService } from "../services/UserProviderService";
-import { AuthorizeAll, Controller, FromParam, Path } from "../router/router";
+import { AuthorizeAll, Controller, FromBody, FromParam, Path, Post } from "../router/router";
 import { Response, Request, NextFunction } from "express";
 
 
@@ -24,4 +24,21 @@ export class UserProviderController {
             next(error);
         }
     };
+
+    @Post("/available-days")
+    @FromBody("available_days")
+    async setAvailableDays(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            const { available_days } = req.body;
+
+            await this.userProviderService.setAvailableDays(user_id, available_days);
+
+            res.Ok();
+        } catch (error) {
+            next(error);
+        }
+    };
+    
+
 }

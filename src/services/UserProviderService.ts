@@ -21,7 +21,7 @@ export class UserProviderService {
 
                 if (!_user)
                     throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
-                    
+
                 if (!_user.email_verified)
                     throw new ServiceError("Usuario sin autenticacion.", HttpStatusCode.UNAUTHORIZED);
 
@@ -60,13 +60,13 @@ export class UserProviderService {
             const favModel = new FavoriteModel(client);
             try {
                 const user = await userModel.getById(user_id);
-                if(!user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
-                
+                if (!user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
+
                 const user_provider = await userModel.getById(service_provider_id);
-                if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.", HttpStatusCode.NOT_FOUND);
+                if (!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.", HttpStatusCode.NOT_FOUND);
 
                 const _favorite = await favModel.getOne(user_id, service_provider_id);
-                if(_favorite) throw new ServiceError("Favorito ya agregado.");
+                if (_favorite) throw new ServiceError("Favorito ya agregado.");
 
                 const favorite = await favModel.insert(user_id, service_provider_id);
                 await this.conection.commit(client);
@@ -85,14 +85,45 @@ export class UserProviderService {
             const favModel = new FavoriteModel(client);
             try {
                 const user = await userModel.getById(user_id);
-                if(!user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
-                
+                if (!user) throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
+
                 const user_provider = await userModel.getById(service_provider_id);
-                if(!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.", HttpStatusCode.NOT_FOUND);
+                if (!user_provider) throw new ServiceError("Proveedor de servicios no encontrado.", HttpStatusCode.NOT_FOUND);
 
                 const rowCount = await favModel.delete(user_id, service_provider_id);
                 await this.conection.commit(client);
                 res(rowCount);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    }
+
+    setAvailableDays = (user_id: string, available_days: string[]): Promise<void> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const userModel = new UserModel(client);
+            try {
+                const _user = await userModel.getById(user_id);
+
+                if (!_user)
+                    throw new ServiceError("Usuario no encontrado.", HttpStatusCode.NOT_FOUND);
+
+                const validFormat = /^[MTWRFSAU*] ([0-1]?[0-9]|2[0-3]):[0-5][0-9] ([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+                for (let available_day of available_days) {
+                    if(!validFormat.test(available_day)) throw new ServiceError(`Formato de fecha incorrecto: '${available_day}'`);
+                    let format = available_day.split(" ");
+                    if(format[1] >= format[2]) throw new ServiceError(`Formato de fecha incorrecto: '${available_day}'`);
+                }
+
+                const user = await userModel.update(user_id, {
+                    available_days
+                });
+                if (!user) throw new ServiceError("Error al actualizar los dias disponibles.", HttpStatusCode.BAD_REQUEST);
+
+                await this.conection.commit(client);
+                res();
             } catch (error) {
                 await this.conection.rollback(client);
                 rej(error)

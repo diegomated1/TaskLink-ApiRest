@@ -101,25 +101,100 @@ export class OffertService {
         });
     };
 
-    changeOffertStatus =  (user_id: string, offert_id: string, status_id: number): Promise<Offert> => {
+    accept =  (user_id: string, offert_id: string): Promise<Offert> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const offertModel = new OffertModel(client);
-            const statusModel = new StatusModel(client);
             try {
-                const status = await statusModel.getStatus(status_id);
-
-                if(!status || status_id == 1)
-                    throw new ServiceError("El estado no es valido.");
 
                 const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
 
                 if (!offertCheck)
                     throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
 
+                const offert = await offertModel.update(offert_id, {
+                    status_id: 2
+                });
+
+                if (!offert)
+                    throw new ServiceError("No se pudo actualizar la oferta.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+                await this.conection.commit(client);
+                res(offert);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    };
+
+    decline =  (user_id: string, offert_id: string): Promise<Offert> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const offertModel = new OffertModel(client);
+            try {
+
+                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+
+                if (!offertCheck)
+                    throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
 
                 const offert = await offertModel.update(offert_id, {
-                    status_id
+                    status_id: 5
+                });
+
+                if (!offert)
+                    throw new ServiceError("No se pudo actualizar la oferta.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+                await this.conection.commit(client);
+                res(offert);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    };
+
+    cancel =  (user_id: string, offert_id: string): Promise<Offert> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const offertModel = new OffertModel(client);
+            try {
+
+                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+
+                if (!offertCheck)
+                    throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
+
+                const offert = await offertModel.update(offert_id, {
+                    status_id: 4
+                });
+
+                if (!offert)
+                    throw new ServiceError("No se pudo actualizar la oferta.", HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+                await this.conection.commit(client);
+                res(offert);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    };
+
+    end =  (user_id: string, offert_id: string): Promise<Offert> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const offertModel = new OffertModel(client);
+            try {
+
+                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+
+                if (!offertCheck)
+                    throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
+
+                const offert = await offertModel.update(offert_id, {
+                    status_id: 3
                 });
 
                 if (!offert)

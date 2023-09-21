@@ -10,8 +10,7 @@ export class OffertController {
 
     constructor(
         private readonly offertService: OffertService
-    ) {
-    }
+    ) { }
 
     @Post()
     @FromBody("Offert", OffertPostValidator)
@@ -69,8 +68,7 @@ export class OffertController {
     };
 
     @Put("/{offert_id}")
-    @FromParam("offert_id")
-    @FromBody("Offert", OffertPutValidator)
+    @FromParam("offert_id") @FromBody("Offert", OffertPutValidator)
     async updateOffert(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
@@ -85,15 +83,59 @@ export class OffertController {
         }
     };
 
-    @Path("/{offert_id}/status/{status_id}")
-    @FromParam("offert_id")
-    @FromParam("status_id")
-    async changeOffertStatus(req: Request, res: Response, next: NextFunction) {
+    @Post("/{offert_id}/action/accept")
+    @FromParam("offert_id") @FromBody("status_id")
+    async acceptOffert(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            const { offert_id, status_id } = req.params;
+            const { offert_id } = req.params;
 
-            const aggendedOfferts = await this.offertService.changeOffertStatus(user_id, offert_id, parseInt(status_id));
+            const aggendedOfferts = await this.offertService.accept(user_id, offert_id);
+
+            res.Ok(aggendedOfferts);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    @Post("/{offert_id}/action/decline")
+    @FromParam("offert_id") @FromBody("status_id")
+    async declineOffert(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            const { offert_id } = req.params;
+
+            const aggendedOfferts = await this.offertService.decline(user_id, offert_id);
+
+            res.Ok(aggendedOfferts);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    @Post("/{offert_id}/action/cancel")
+    @FromParam("offert_id") @FromBody("status_id")
+    async cancelOffert(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            const { offert_id } = req.params;
+
+            const aggendedOfferts = await this.offertService.cancel(user_id, offert_id);
+
+            res.Ok(aggendedOfferts);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    @Post("/{offert_id}/action/end")
+    @FromParam("offert_id") @FromBody("status_id")
+    async endOffert(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            const { offert_id } = req.params;
+
+            const aggendedOfferts = await this.offertService.end(user_id, offert_id);
 
             res.Ok(aggendedOfferts);
         } catch (error) {

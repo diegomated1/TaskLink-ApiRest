@@ -41,13 +41,19 @@ export class OffertModel {
         });
     };
 
+    /**
+     * Find the offer by ID and for the creator of the offer
+     * @param id offert id
+     * @param user_id user provider id
+     * @returns offer model
+     */
     getByIdByServiceProvider = (id: string, user_id: string): Promise<Offert | null> => {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
                 const query = `SELECT * FROM dbo."Offert" o 
-                INNER JOIN dbo."Service" s ON s.id = o.service_id
-                WHERE o.id = $1 AND s.user_id = $2`;
+                                INNER JOIN dbo."Service" s ON s.id = o.service_id
+                                WHERE o.id = $1 AND s.user_id = $2`;
                 const values = [id, user_id];
                 const result = await this.client.query<Offert>(query, values);
                 const offert = result.rows[0];

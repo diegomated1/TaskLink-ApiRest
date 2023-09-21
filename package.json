@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "set ENVIORENT=development && tsc && nodemon build/index",
+    "dev": "tsc && nodemon build/index",
     "build": "tsc",
     "start": "node build/index",
     "test": "jest --forceExit"

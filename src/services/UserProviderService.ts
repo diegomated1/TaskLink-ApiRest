@@ -53,7 +53,7 @@ export class UserProviderService {
         });
     }
 
-    insert = (user_id: string, service_provider_id: string): Promise<Favorite | null> => {
+    insertFavorite = (user_id: string, service_provider_id: string): Promise<Favorite | null> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const userModel = new UserModel(client);
@@ -78,7 +78,7 @@ export class UserProviderService {
         });
     }
 
-    delete = (user_id: string, service_provider_id: string): Promise<number> => {
+    deleteFavorite = (user_id: string, service_provider_id: string): Promise<number> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const userModel = new UserModel(client);

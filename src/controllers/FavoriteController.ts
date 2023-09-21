@@ -32,7 +32,7 @@ export class FavoriteController {
             const { user_id } = res.locals;
             const { service_provider_id } = req.body;
 
-            const favorite = await this.userProviderService.insert(user_id, service_provider_id);
+            const favorite = await this.userProviderService.insertFavorite(user_id, service_provider_id);
 
             (favorite)
                 ? res.Ok(favorite)
@@ -49,7 +49,7 @@ export class FavoriteController {
             const { user_id } = res.locals;
             const { service_provider_id } = req.body;
 
-            const rowCount = await this.userProviderService.delete(user_id, service_provider_id);
+            const rowCount = await this.userProviderService.deleteFavorite(user_id, service_provider_id);
 
             (rowCount > 0)
                 ? res.Ok()

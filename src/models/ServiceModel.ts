@@ -27,7 +27,7 @@ export class ServiceModel {
             }
         });
     };
-
+    
     getAllByUser = (user_id: string): Promise<ServiceGet[]> => {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
@@ -37,6 +37,24 @@ export class ServiceModel {
                                 INNER JOIN dbo."Category" c ON c.id = s.category_id 
                                 WHERE user_id = $1`;
                 const values = [user_id];
+                const result = await this.client.query<ServiceGet>(query, values);
+                const user = result.rows;
+                res(user);
+            } catch (error) {
+                rej(error);
+            }
+        });
+    };
+
+    getAllByCategory = (category_id: number): Promise<ServiceGet[]> => {
+        return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
+            try {
+                const query =  `SELECT s.id, s.price, s.calification, s.description, s.category_id, c.name AS category
+                                FROM dbo."Service" s
+                                INNER JOIN dbo."Category" c ON c.id = s.category_id 
+                                WHERE category_id = $1`;
+                const values = [category_id];
                 const result = await this.client.query<ServiceGet>(query, values);
                 const user = result.rows;
                 res(user);

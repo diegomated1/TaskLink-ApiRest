@@ -4,6 +4,7 @@ import { ServiceModel } from "../models/ServiceModel";
 import { ServiceGet } from "../interfaces/queries/Services";
 import { ServiceError } from "../utils/errors/service.error";
 import { HttpStatusCode } from "../router/RouterTypes";
+import { CategoryModel } from "../models/CategoryModel";
 
 export class ServiceService {
 
@@ -21,6 +22,26 @@ export class ServiceService {
 
                 await this.conection.commit(client);
                 res(_services);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    }
+
+    getAllByCategory = (category_id: number): Promise<ServiceGet[]> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const serviceModel = new ServiceModel(client);
+            const categoryModel = new CategoryModel(client);
+            try {
+                const category = await categoryModel.getById(category_id);
+                if(!category) throw new ServiceError("Categoria no encontrada", HttpStatusCode.NOT_FOUND);
+
+                const categories = await serviceModel.getAllByCategory(category_id);
+
+                await this.conection.commit(client);
+                res(categories);
             } catch (error) {
                 await this.conection.rollback(client);
                 rej(error)

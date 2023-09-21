@@ -1,4 +1,4 @@
-import { AuthorizeAll, Controller, FromBody, FromParam, Get, Path, Post } from "../router/router";
+import { AuthorizeAll, Controller, FromBody, FromParam, Get, Post } from "../router/router";
 import { Response, Request, NextFunction } from "express";
 import { ServiceService } from "../services/ServiceService";
 import { ServicePostValidator } from "../utils/validators/ServiceValidator";
@@ -56,6 +56,20 @@ export class ServiceController {
             const result = await this.serviceService.rate(user_id, parseFloat(service_id), calification);
 
             res.Ok(result);
+        }catch(error){
+            next(error);
+        }
+    }
+
+    @Get("/category/{category_id}")
+    @FromParam("category_id")
+    async getAllByCategory(req: Request, res: Response, next: NextFunction) {
+        try{
+            const { category_id } = req.params;
+            
+            const services = await this.serviceService.getAllByCategory(parseInt(category_id));
+
+            res.Ok(services);
         }catch(error){
             next(error);
         }

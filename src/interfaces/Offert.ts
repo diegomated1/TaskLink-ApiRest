@@ -1,3 +1,5 @@
+import {types} from "pg";
+
 export interface Offert {
     id: number;
     created_date: Date;

@@ -13,13 +13,13 @@ export class OffertController {
     ) { }
 
     @Post()
-    @FromBody("Offert", OffertPostValidator)
+    @FromBody("Offert", OffertPostValidator) @FromBody("address")
     async insert(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            const { Offert } = req.body;
+            const { Offert, address } = req.body;
 
-            const service = await this.offertService.insert(user_id, Offert);
+            const service = await this.offertService.insert(user_id, Offert, address);
 
             (service)
                 ? res.Ok(service)
@@ -76,6 +76,22 @@ export class OffertController {
             const { Offert } = req.body;
 
             const aggendedOfferts = await this.offertService.update(user_id, offert_id, Offert);
+
+            res.Ok(aggendedOfferts);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    @Path("/{offert_id}/address")
+    @FromParam("offert_id") @FromBody("address")
+    async updateProviderUserLocation(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            const { offert_id } = req.params;
+            const { address } = req.body;
+
+            const aggendedOfferts = await this.offertService.updateAddress(offert_id, address);
 
             res.Ok(aggendedOfferts);
         } catch (error) {

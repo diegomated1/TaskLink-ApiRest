@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS dbo."Offert"(
 
 INSERT INTO dbo."Category"(name) VALUES ('Aseo'), ('Informatica'), ('Transporte');
 
-INSERT INTO dbo."OffertStatus"(name) VALUES ('Creado'), ('En curso'), ('Completado'), ('Cancelado'), ('Rechazado');
+INSERT INTO dbo."OffertStatus"(name) VALUES ('Creado'), ('En curso'), ('Completado'), ('Cancelado'), ('Rechazado'), ('Aceptada');
 
 INSERT INTO dbo."Role"(name) VALUES ('usuario'), ('admin');
 

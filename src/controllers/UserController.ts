@@ -1,12 +1,11 @@
 import { Response, Request, NextFunction } from "express";
 import { validate } from "uuid";
 
-import { Controller, Get, FromParam, Post, FromBody, Put, FromHeader, Delete, AuthorizeAll } from "../router/router";
+import { Controller, Get, FromParam, Post, FromBody, Put, FromHeader, Delete, AuthorizeAll, Authorize } from "../router/router";
 import { UserPutValidator } from "../utils/validators/UserValidator";
 import { UserService } from "../services/UserService";
 
 @Controller()
-@AuthorizeAll()
 export class UserController {
 
   constructor(
@@ -15,6 +14,7 @@ export class UserController {
   }
 
   @Get()
+  @Authorize()
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const all_users = await this.userService.getAll();
@@ -25,6 +25,7 @@ export class UserController {
   };
   
   @Get("/token")
+  @Authorize()
   async getUserByToken(req: Request, res: Response, next: NextFunction) {
     try {
       const { user_id } = res.locals;
@@ -41,6 +42,7 @@ export class UserController {
   };
 
   @Get("/{user_id}")
+  @Authorize()
   @FromParam("user_id")
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
@@ -58,6 +60,7 @@ export class UserController {
   };
 
   @Put()
+  @Authorize()
   @FromBody("User", UserPutValidator)
   async update(req: Request, res: Response, next: NextFunction) {
     try {
@@ -75,6 +78,7 @@ export class UserController {
   };
 
   @Delete()
+  @Authorize()
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { user_id } = res.locals;

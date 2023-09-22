@@ -31,8 +31,8 @@ types.setTypeParser(1700, function (val) {
 function main(): App {
 
     // Database
-    const enviorent = process.env.ENVIORENT ?? "development";
-    const conectionString = enviorent === "production" ? process.env.POSTGRES_CONECTIONSTRING! : process.env.POSTGRES_CONECTIONSTRING_DEV!;
+    const ENVIRONMENT = process.env.ENVIRONMENT ?? "development";
+    const conectionString = ENVIRONMENT === "production" ? process.env.POSTGRES_CONECTIONSTRING! : process.env.POSTGRES_CONECTIONSTRING_DEV!;
 
     const database = new Database(conectionString);
 

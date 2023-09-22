@@ -8,7 +8,7 @@ import { ErrorMiddleware } from './middlewares/ErrorMiddleware';
 
 export default class App {
     readonly app: Application
-    #ENVIORENT: string
+    #ENVIRONMENT: string
 
     #http_server?: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>
 
@@ -19,9 +19,9 @@ export default class App {
         private readonly Router: Router,
         private readonly database: Database
     ) {
-        this.#ENVIORENT = process.env.ENVIORENT ?? 'development';
+        this.#ENVIRONMENT = process.env.ENVIRONMENT ?? 'development';
         
-        if(this.#ENVIORENT == "test"){
+        if(this.#ENVIRONMENT == "test"){
             this.#http_port = 0;
         }else{
             this.#http_port = parseInt(process.env.API_HTTP_PORT ?? '3000');
@@ -39,7 +39,7 @@ export default class App {
         }));
         this.app.use(express.json());
         this.app.use(Responses)
-        if (this.#ENVIORENT === "development") {
+        if (this.#ENVIRONMENT === "development") {
             this.app.use(morgan('dev'));
         }
     }

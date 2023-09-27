@@ -3,7 +3,7 @@ import { Service } from '../interfaces/Service';
 import { Offert } from '../interfaces/Offert';
 import { PoolClient } from 'pg';
 import { OffertGet } from '../interfaces/queries/Offert';
-import { QUEEY_offerts, QUERY_myOfferts } from './queries/Offert';
+import { QUERY_offerts, QUERY_myOfferts, QUERY_offert_by_id } from './queries/Offert';
 
 export class OffertModel {
     
@@ -18,6 +18,21 @@ export class OffertModel {
                 const query = 'SELECT * FROM dbo."Offert" WHERE id = $1';
                 const values = [id];
                 const result = await this.client.query<Offert>(query, values);
+                const offert = result.rows[0];
+                res(offert);
+            } catch (error) {
+                rej(error);
+            }
+        });
+    };
+
+    getByIdExtended = (id: string): Promise<OffertGet | null> => {
+        return new Promise(async (res, rej) => {
+            if(!this.client) throw new ServiceError("Error de conexion");
+            try {
+                const query = QUERY_offert_by_id;
+                const values = [id];
+                const result = await this.client.query<OffertGet>(query, values);
                 const offert = result.rows[0];
                 res(offert);
             } catch (error) {
@@ -103,7 +118,7 @@ export class OffertModel {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query =  QUEEY_offerts;
+                const query =  QUERY_offerts;
                 const offset = ((page-1) * rows);
                 const values = [user_id, status_id, price, rows, offset];
                 

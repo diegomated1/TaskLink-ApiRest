@@ -29,6 +29,23 @@ export class OffertController {
         }
     }
 
+    @Get("/{offert_id}")
+    @FromParam("offert_id")
+    async getOffertById(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { offert_id } = req.params;
+            
+            const offert = await this.offertService.getById(offert_id);
+
+            (offert)
+                ? res.Ok(offert)
+                : res.NotFound("Oferta no encontrada");
+            
+        } catch (error) {
+            next(error);
+        }
+    };
+
     @Get()
     @FromQuery("page") @FromQuery("rows") @FromQuery("status_id") @FromQuery("price")
     async getOfferts(req: Request, res: Response, next: NextFunction) {

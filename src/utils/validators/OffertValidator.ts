@@ -1,4 +1,4 @@
-import { Offert } from "../../interfaces/Offert";
+import { Offert } from '../../interfaces/Offert';
 import joi from 'joi';
 
 export const OffertPostValidator = joi.object<Offert>({

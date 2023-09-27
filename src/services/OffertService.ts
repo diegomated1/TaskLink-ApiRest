@@ -44,6 +44,23 @@ export class OffertService {
         });
     }
 
+    getById = (offert_id: string): Promise<OffertGet | null> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const offertModel = new OffertModel(client);
+            try {
+
+                const _offert = await offertModel.getByIdExtended(offert_id);
+
+                await this.conection.commit(client);
+                res(_offert);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    }
+
     getMyOfferts = (email: string, page?: number, rows?: number, status_id?: number, price?: string): Promise<OffertGet[]> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();

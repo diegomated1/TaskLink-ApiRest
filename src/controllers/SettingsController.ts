@@ -12,7 +12,7 @@ export class SettingsController {
     ) {
     }
 
-    @Get()
+    @Get("", "Get a user's configuration")
     async getSettingsByUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;

@@ -12,7 +12,7 @@ export class CategoryController {
     ) {
     }
 
-    @Get()
+    @Get("", "Obtain all services categories")
     async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const categories = await this.categoryService.getAll();

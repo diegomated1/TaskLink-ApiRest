@@ -12,7 +12,7 @@ export class OffertController {
         private readonly offertService: OffertService
     ) { }
 
-    @Post()
+    @Post("", "Create an offer of a service")
     @FromBody("Offert", OffertPostValidator) @FromBody("address")
     async insert(req: Request, res: Response, next: NextFunction) {
         try {
@@ -29,7 +29,7 @@ export class OffertController {
         }
     }
 
-    @Get("/{offert_id}")
+    @Get("/{offert_id}", "Get an offer by ID")
     @FromParam("offert_id")
     async getOffertById(req: Request, res: Response, next: NextFunction) {
         try {
@@ -46,7 +46,7 @@ export class OffertController {
         }
     };
 
-    @Get()
+    @Get("", "Get all the offers made by me")
     @FromQuery("page") @FromQuery("rows") @FromQuery("status_id") @FromQuery("price")
     async getOfferts(req: Request, res: Response, next: NextFunction) {
         try {
@@ -65,7 +65,7 @@ export class OffertController {
         }
     };
 
-    @Get("/my-offerts")
+    @Get("/my-offerts", "Get all the offers that have requested me")
     @FromQuery("page") @FromQuery("rows") @FromQuery("status_id") @FromQuery("price")
     async getMyOfferts(req: Request, res: Response, next: NextFunction) {
         try {
@@ -84,7 +84,7 @@ export class OffertController {
         }
     };
 
-    @Put("/{offert_id}")
+    @Put("/{offert_id}", "Update an offer")
     @FromParam("offert_id") @FromBody("Offert", OffertPutValidator)
     async updateOffert(req: Request, res: Response, next: NextFunction) {
         try {
@@ -100,7 +100,7 @@ export class OffertController {
         }
     };
 
-    @Path("/{offert_id}/address")
+    @Path("/{offert_id}/address", "Update addressing an offer")
     @FromParam("offert_id") @FromBody("address")
     async updateProviderUserLocation(req: Request, res: Response, next: NextFunction) {
         try {
@@ -116,7 +116,7 @@ export class OffertController {
         }
     };
 
-    @Post("/{offert_id}/action/accept")
+    @Post("/{offert_id}/action/accept", "Accept an offer")
     @FromParam("offert_id") @FromBody("status_id")
     async acceptOffert(req: Request, res: Response, next: NextFunction) {
         try {
@@ -131,7 +131,7 @@ export class OffertController {
         }
     };
 
-    @Post("/{offert_id}/action/decline")
+    @Post("/{offert_id}/action/decline", "Decline an offer")
     @FromParam("offert_id") @FromBody("status_id")
     async declineOffert(req: Request, res: Response, next: NextFunction) {
         try {
@@ -146,7 +146,7 @@ export class OffertController {
         }
     };
 
-    @Post("/{offert_id}/action/cancel")
+    @Post("/{offert_id}/action/cancel", "Cancel a service")
     @FromParam("offert_id") @FromBody("status_id")
     async cancelOffert(req: Request, res: Response, next: NextFunction) {
         try {
@@ -161,7 +161,7 @@ export class OffertController {
         }
     };
 
-    @Post("/{offert_id}/action/end")
+    @Post("/{offert_id}/action/end", "Finish a service")
     @FromParam("offert_id") @FromBody("status_id")
     async endOffert(req: Request, res: Response, next: NextFunction) {
         try {

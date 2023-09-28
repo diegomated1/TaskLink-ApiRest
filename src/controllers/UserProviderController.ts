@@ -12,7 +12,7 @@ export class UserProviderController {
     ) {
     }
 
-    @Path()
+    @Path("", "Create service provider profile")
     async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
@@ -25,7 +25,7 @@ export class UserProviderController {
         }
     };
 
-    @Post("/available-days")
+    @Post("/available-days", "Update the days available")
     @FromBody("available_days")
     async setAvailableDays(req: Request, res: Response, next: NextFunction) {
         try {

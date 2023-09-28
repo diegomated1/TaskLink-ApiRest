@@ -17,7 +17,7 @@ export class AuthController {
   }
 
 
-  @Post("/sesion")
+  @Post("/sesion", "Log in")
   @FromBody("email")
   @FromBody("password")
   async login(req: Request, res: Response, next: NextFunction) {
@@ -32,7 +32,7 @@ export class AuthController {
     }
   };
 
-  @Post("/register")
+  @Post("/register", "Register")
   @FromBody("User", UserPostValidator)
   async insert(req: Request, res: Response, next: NextFunction) {
     try {
@@ -46,7 +46,7 @@ export class AuthController {
     }
   };
 
-  @Post("/verify-email")
+  @Post("/verify-email", "Send Verification Code to Email")
   @Authorize()
   @FromBody("email")
   async verifyEmail(req: Request, res: Response, next: NextFunction) {
@@ -61,7 +61,7 @@ export class AuthController {
     }
   }
 
-  @Post("/verify-email-code")
+  @Post("/verify-email-code", "Verify email code")
   @Authorize()
   @FromBody("email_code")
   async verifyEmailCode(req: Request, res: Response, next: NextFunction) {

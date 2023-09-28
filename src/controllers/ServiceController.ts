@@ -12,7 +12,7 @@ export class ServiceController {
         private readonly serviceService: ServiceService
     ) { }
 
-    @Post()
+    @Post("", "Create a service")
     @FromBody("Service", ServicePostValidator)
     async insert(req: Request, res: Response, next: NextFunction) {
         try {
@@ -29,7 +29,7 @@ export class ServiceController {
         }
     }
 
-    @Get()
+    @Get("", "Get all services per user")
     async getAllByUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
@@ -44,9 +44,8 @@ export class ServiceController {
         }
     }
 
-    @Post("/{service_id}/rate")
-    @FromParam("service_id")
-    @FromBody("calification")
+    @Post("/{service_id}/rate", "Rate a service")
+    @FromParam("service_id") @FromBody("calification")
     async rate(req: Request, res: Response, next: NextFunction) {
         try{
             const { user_id } = res.locals;
@@ -61,7 +60,7 @@ export class ServiceController {
         }
     }
 
-    @Get("/category/{category_id}")
+    @Get("/category/{category_id}", "Obtain services per category")
     @FromParam("category_id")
     async getAllByCategory(req: Request, res: Response, next: NextFunction) {
         try{

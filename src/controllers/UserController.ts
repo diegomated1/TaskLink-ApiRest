@@ -13,7 +13,7 @@ export class UserController {
   ) {
   }
 
-  @Get()
+  @Get("", "Get all users")
   @Authorize()
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
@@ -24,7 +24,7 @@ export class UserController {
     }
   };
   
-  @Get("/token")
+  @Get("/token", "Get user by Token")
   @Authorize()
   async getUserByToken(req: Request, res: Response, next: NextFunction) {
     try {
@@ -41,7 +41,7 @@ export class UserController {
     }
   };
 
-  @Get("/{user_id}")
+  @Get("/{user_id}", "Get user by ID")
   @Authorize()
   @FromParam("user_id")
   async getById(req: Request, res: Response, next: NextFunction) {
@@ -59,7 +59,7 @@ export class UserController {
     }
   };
 
-  @Put()
+  @Put("", "Update a user's data")
   @Authorize()
   @FromBody("User", UserPutValidator)
   async update(req: Request, res: Response, next: NextFunction) {
@@ -77,7 +77,7 @@ export class UserController {
     }
   };
 
-  @Delete()
+  @Delete("", "Delete user")
   @Authorize()
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
@@ -91,7 +91,7 @@ export class UserController {
     }
   };
 
-  @Post("/forgot-password")
+  @Post("/forgot-password", "Send email to restore password")
   @FromBody("email")
   async forgotPassword(req: Request, res: Response, next: NextFunction) {
     try {
@@ -104,7 +104,7 @@ export class UserController {
     }
   }
 
-  @Post("/reset-password")
+  @Post("/reset-password", "Verify email code")
   @FromBody("email") @FromBody("email_code") @FromBody("new_password")
   async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {

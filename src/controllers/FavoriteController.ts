@@ -12,7 +12,7 @@ export class FavoriteController {
     ) {
     }
 
-    @Get()
+    @Get("", "Get all user favorites")
     async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
@@ -25,12 +25,12 @@ export class FavoriteController {
         }
     }
 
-    @Post()
-    @FromBody("service_provider_id")
+    @Post("/{service_provider_id}", "Add a favorite")
+    @FromParam("service_provider_id")
     async insert(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            const { service_provider_id } = req.body;
+            const { service_provider_id } = req.params;
 
             const favorite = await this.userProviderService.insertFavorite(user_id, service_provider_id);
 
@@ -42,7 +42,7 @@ export class FavoriteController {
         }
     }
 
-    @Delete()
+    @Delete("/{service_provider_id}", "Delete favorite")
     @FromBody("service_provider_id")
     async delete(req: Request, res: Response, next: NextFunction) {
         try {

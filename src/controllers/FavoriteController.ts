@@ -43,11 +43,11 @@ export class FavoriteController {
     }
 
     @Delete("/{service_provider_id}", "Delete favorite")
-    @FromBody("service_provider_id")
+    @FromParam("service_provider_id")
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            const { service_provider_id } = req.body;
+            const { service_provider_id } = req.params;
 
             const rowCount = await this.userProviderService.deleteFavorite(user_id, service_provider_id);
 

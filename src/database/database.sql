@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS dbo."User"(
     provider BOOLEAN NOT NULL,
     email_code INT,
     email_code_generate BIGINT,
-    available_days TEXT[],
+    available_days TEXT[] DEFAULT array[]::varchar[],
     FOREIGN KEY (role_id) REFERENCES dbo."Role"(id),
     FOREIGN KEY (identification_type_id) REFERENCES dbo."IdentificationType"(id)
 );

@@ -29,6 +29,19 @@ export class ServiceController {
         }
     }
 
+    @Get("/all", "Get all services")
+    async getAll(req: Request, res: Response, next: NextFunction) {
+        try{
+            const { category_id } = req.params;
+            
+            const services = await this.serviceService.getAll();
+
+            res.Ok(services);
+        }catch(error){
+            next(error);
+        }
+    }
+
     @Get("", "Get all services per user")
     async getAllByUser(req: Request, res: Response, next: NextFunction) {
         try {
@@ -60,7 +73,7 @@ export class ServiceController {
         }
     }
 
-    @Get("/category/{category_id}", "Obtain services per category")
+    @Get("/all/category/{category_id}", "Obtain services per category")
     @FromParam("category_id")
     async getAllByCategory(req: Request, res: Response, next: NextFunction) {
         try{

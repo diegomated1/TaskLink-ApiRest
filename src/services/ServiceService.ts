@@ -12,6 +12,23 @@ export class ServiceService {
         private readonly conection: Conection
     ) { }
 
+    getAll = (): Promise<ServiceGet[]> => {
+        return new Promise(async (res, rej) => {
+            const client = await this.conection.connect();
+            const serviceModel = new ServiceModel(client);
+            try {
+
+                const _services = await serviceModel.getAll();
+
+                await this.conection.commit(client);
+                res(_services);
+            } catch (error) {
+                await this.conection.rollback(client);
+                rej(error)
+            }
+        });
+    }
+
     getAllByUser = (user_id: string): Promise<ServiceGet[]> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();

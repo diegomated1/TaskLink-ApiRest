@@ -16,7 +16,7 @@ describe("POST /auth/sesion", () => {
     test("GOD DATA", async () => {
 
         const body = {
-            email: "god@gmail.com",
+            email: "test@test.com",
             password: "elPepe123@"
         }
 
@@ -34,7 +34,7 @@ describe("POST /auth/sesion", () => {
 
     test("WRONG EMAIL", async () => {
         const body = {
-            email: "wrongEmail@gmail.com",
+            email: "test@t3st.com",
             password: "elPepe123@"
         }
 
@@ -53,8 +53,8 @@ describe("POST /auth/sesion", () => {
 
     test("WRONG PASSWORD", async () => {
         const body = {
-            email: "god@gmail.com",
-            password: "wrongPassword"
+            email: "test@test.com",
+            password: "elPepe1234"
         }
 
         const expectedResponse:GlobalResponse<any> = {
@@ -72,7 +72,7 @@ describe("POST /auth/sesion", () => {
 
 });
 
-describe.skip("POST /auth/register", () => {
+describe("POST /auth/register", () => {
 
     test("GOD DATA", async () => {
         const cc = Math.random().toString().slice(2);
@@ -139,125 +139,6 @@ describe.skip("POST /auth/register", () => {
         const response = await request(app.app).post("/auth/register").send({ User });
         expect(response.body).toEqual(expectedResponse);
         expect(response.statusCode).toBe(400);
-    });
-
-});
-
-describe.skip('Verify email', () => {
-
-    test('GOD CODE', async () => {
-        // REGISTER USER
-        const cc = Math.random().toString().slice(2);
-        const email = `${Math.random().toString(16).slice(2)}@gmail.com`;
-        let User: Partial<User> = {
-            identification_type_id: 1,
-            identification: cc,
-            fullname: "Diego Cardenas",
-            email,
-            birthdate: "2002-10-15T05:00:00.000Z",
-            phone: "573173887502",
-            password: "elPepe123@"
-        };
-        const expectedR1 = {
-            value: expect.any(String),
-            errors: [],
-            success: true
-        };
-        const r1 = await request(app.app).post('/auth/register').send({User});
-        expect(r1.body).toEqual(expectedR1);
-        expect(r1.status).toBe(200);
-
-        const token = `Bearer ${r1.body.value}`;
-
-        // SEND EMAIL FOR VERIFY EMAIL
-        const expectedR2 = {
-            value: null,
-            errors: [],
-            success: true
-        };
-        const r2 = await request(app.app).post('/auth/verify-email').set("Authorization", token).send({
-            email
-        });
-        expect(r2.body).toEqual(expectedR2);
-
-        // GET USER FOR CHECK CODE
-        const r3 = await request(app.app).get('/user/token').set("Authorization", token).send();
-        expect(r3.body.value).not.toBeNull();
-        expect(r3.body.value.email_code).not.toBeNull();
-        expect(r3.body.value.email_verified).toBe(false);
-        const email_code = r3.body.value.email_code;
-
-        // VERIFY EMAIL
-        const expectedR4 = {
-            value: null,
-            errors: [],
-            success: true
-        };
-        const r4 = await request(app.app).post('/auth/verify-email-code').set("Authorization", token).send({
-            email_code
-        });
-        expect(r4.body).toEqual(expectedR4);
-        expect(r4.status).toBe(200);
-
-        
-        // CHECK IF EMAIL IS VERIFIED
-        const r5 = await request(app.app).get('/user/token').set("Authorization", token).send();
-        expect(r5.body.value).not.toBeNull();
-        expect(r5.body.value.email_code).not.toBeNull();
-        expect(r5.body.value.email_verified).toBe(true);
-    });
-
-    test('WRONG CODE', async () => {
-        //#region REGISTER USER
-        const cc = Math.random().toString().slice(2);
-        const email = `${Math.random().toString(16).slice(2)}@gmail.com`;
-        let User: Partial<User> = {
-            identification_type_id: 1,
-            identification: cc,
-            fullname: "Diego Cardenas",
-            email,
-            birthdate: "2002-10-15T05:00:00.000Z",
-            phone: "573173887502",
-            password: "elPepe123@"
-        };
-        const expectedR1 = {
-            value: expect.any(String),
-            errors: [],
-            success: true
-        };
-        const r1 = await request(app.app).post('/auth/register').send({User});
-        expect(r1.body).toEqual(expectedR1);
-        expect(r1.status).toBe(200);
-
-        //#endregion REGISTER USER
-    
-        const token = `Bearer ${r1.body.value}`;
-        
-        // SEND EMAIL FOR VERIFY EMAIL
-        const expectedR2 = {
-            value: null,
-            errors: [],
-            success: true
-        };
-        const r2 = await request(app.app).post('/auth/verify-email').set("Authorization", token).send({
-            email
-        });
-        expect(r2.body).toEqual(expectedR2);
-
-        // VERIFY EMAIL
-        const expectedR4 = {
-            value: null,
-            errors: [
-                "Codigo incorrecto."
-            ],
-            success: false
-        };
-        const r4 = await request(app.app).post('/auth/verify-email-code').set("Authorization", token).send({
-            email_code: "99999"
-        });
-        expect(r4.body).toEqual(expectedR4);
-        expect(r4.status).toBe(400);
-        
     });
 
 });

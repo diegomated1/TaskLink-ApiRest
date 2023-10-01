@@ -53,7 +53,8 @@ describe("GET /user", () => {
                 email_code_generate: null,
                 provider: expect.any(Boolean),
                 role_id: 1,
-                role: "usuario"
+                role: "usuario",
+                available_days: []
             };
         var expectedResponse = {
             value: expectedUser,
@@ -120,7 +121,7 @@ describe("PUT /user", () => {
             }
         };
 
-        let UserExpected: User = {
+        let UserExpected: Partial<User> = {
             id: expect.any(String),
             identification_type_id: 1,
             identification: cc,
@@ -136,6 +137,7 @@ describe("PUT /user", () => {
             email_code_generate: null,
             provider: false,
             birthdate: expect.any(String),
+            available_days: []
         };
 
         var expectedResponse: GlobalResponse<any> = {

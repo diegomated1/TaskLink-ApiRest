@@ -96,8 +96,8 @@ CREATE TABLE IF NOT EXISTS dbo."OffertStatus"(
 
 CREATE TABLE IF NOT EXISTS dbo."Offert"(
 	id SERIAL PRIMARY KEY NOT NULL,
-    created_date DATE NOT NULL,
-    agended_date DATE NOT NULL,
+    created_date TIMESTAMP NOT NULL,
+    agended_date TIMESTAMP NOT NULL,
     user_id UUID NOT NULL,
     service_id INT NOT NULL,
     status_id INT NOT NULL,
@@ -120,13 +120,18 @@ INSERT INTO dbo."IdentificationType"(name) VALUES ('CC'), ('Pasaporte');
 
 INSERT INTO dbo."User"(id, identification, identification_type_id, fullname, email, email_verified, provider, registration_date, phone, birthdate, password, role_id) VALUES 
 	('97f99c61-a665-4eb5-9dd1-799fd82ffd34'::UUID, '1001369364', 1, 'Diego Cardenas', 'diegodaco08@gmail.com', false, false, CURRENT_TIMESTAMP, '573173887502', '2002-10-15', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1),
-	('1dde026b-8b82-49b9-a9ed-1ed2d7208e83'::UUID, '9647637690636008', 1, 'Diego Cardenas', 'diegodaco09@gmail.com', false, false, CURRENT_TIMESTAMP, '573173887502', '2002-10-15', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1),
-	('1dde026b-8b82-49b9-a9ed-1ed2d7208e86'::UUID, '9647637690636009', 1, 'Diego Cardenas', 'god@gmail.com', false, false, CURRENT_TIMESTAMP, '573173887502', '2002-10-15', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1);
+	('1dde026b-8b82-49b9-a9ed-1ed2d7208e83'::UUID, '113456789', 1, 'Test Account', 'test@test.com', false, false, CURRENT_TIMESTAMP, '123456789', '2000-01-01', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1),
+	('1dde026b-8b82-49b9-a9ed-1ed2d7208e86'::UUID, '123456789', 1, 'Test Account 2', 'test2@test.com', false, false, CURRENT_TIMESTAMP, '123456789', '2000-01-01', '$2b$10$Nyabob8uXAXdK6IGZNrPZOboaBvlM689VUtpgY3riRzXRWGLAeulm', 1);
 
 INSERT INTO dbo."Configuracion"(system_notification, promotion_notification, user_id) VALUES
-    (true::BOOL, true::BOOL, '97f99c61-a665-4eb5-9dd1-799fd82ffd34'::UUID) ,
-    (true::BOOL, true::BOOL, '1dde026b-8b82-49b9-a9ed-1ed2d7208e83'::UUID) ,
+    (true::BOOL, true::BOOL, '97f99c61-a665-4eb5-9dd1-799fd82ffd34'::UUID),
+    (true::BOOL, true::BOOL, '1dde026b-8b82-49b9-a9ed-1ed2d7208e83'::UUID),
     (true::BOOL, true::BOOL, '1dde026b-8b82-49b9-a9ed-1ed2d7208e86'::UUID);
+
+INSERT INTO dbo."Service"(id, price, calification, calification_acu, calification_count, description, category_id, user_id) VALUES
+    (1, 10500, 5, 15, 3, '', 1, '97f99c61-a665-4eb5-9dd1-799fd82ffd34'::UUID),
+    (2, 80000, 5, 0, 0, '', 2, '1dde026b-8b82-49b9-a9ed-1ed2d7208e83'::UUID),
+    (3, 7500, 5, 0, 0, '', 3, '1dde026b-8b82-49b9-a9ed-1ed2d7208e86'::UUID);
 
 
 SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'TaskLinkDev' AND pid <> pg_backend_pid();

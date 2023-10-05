@@ -29,6 +29,34 @@ export class ServiceController {
         }
     }
 
+    @Get("/{service_id}", "Get service by id")
+    @FromParam("service_id")
+    async getById(req: Request, res: Response, next: NextFunction) {
+        try{
+            const { service_id } = req.params;
+            
+            const services = await this.serviceService.getById(parseInt(service_id));
+
+            res.Ok(services);
+        }catch(error){
+            next(error);
+        }
+    }
+
+    @Get("/all", "Get all services")
+    async getAll(req: Request, res: Response, next: NextFunction) {
+        try{
+            const { category_id } = req.params;
+            
+            const services = await this.serviceService.getAll();
+
+            res.Ok(services);
+        }catch(error){
+            next(error);
+        }
+    }
+
+
     @Get("", "Get all services per user")
     async getAllByUser(req: Request, res: Response, next: NextFunction) {
         try {

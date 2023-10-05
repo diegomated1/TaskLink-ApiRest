@@ -2,6 +2,7 @@ import { ServiceError } from '../utils/errors/service.error';
 import { Service } from '../interfaces/Service';
 import { PoolClient } from 'pg';
 import { ServiceGet } from 'interfaces/queries/Services';
+import { QUERY_getOneService, QUERY_getServices } from './queries/User';
 
 export class ServiceModel {
     
@@ -13,11 +14,7 @@ export class ServiceModel {
         return new Promise(async (res, rej) => {
             if(!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query =  `SELECT s.id, s.price, s.calification, s.calification_count, s.calification_acu, s.description, s.category_id, 
-                                s.user_id, c.name AS category
-                                FROM dbo."Service" s
-                                INNER JOIN dbo."Category" c ON c.id = s.category_id 
-                                WHERE s.id = $1`;
+                const query = QUERY_getOneService;
                 const values = [id];
                 const result = await this.client.query<ServiceGet>(query, values);
                 const user = result.rows[0];

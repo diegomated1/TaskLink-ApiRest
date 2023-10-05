@@ -101,17 +101,11 @@ class RouterDesc {
         if (this.#swaggerDocument.servers === undefined ||
             !Array.isArray(this.#swaggerDocument.servers)) this.#swaggerDocument.paths = []
 
-        const http_port = process.env.API_HTTP_PORT ? parseInt(process.env.API_HTTP_PORT) : undefined;
-        const https_port = process.env.API_HTTPS_PORT ? parseInt(process.env.API_HTTPS_PORT) : undefined;
+        const http_port = process.env.API_HTTP_PORT ? parseInt(process.env.API_HTTP_PORT) : 3000;
         const host = process.env.API_HOST ?? 'localhost';
 
-        if (host) {
-            if (http_port !== undefined) {
-                this.#swaggerDocument.servers.push({ url: `http://${host}:${http_port}` });
-            }
-            if (https_port !== undefined) {
-                this.#swaggerDocument.servers.push({ url: `https://${host}:${https_port}` });
-            }
+        if (http_port !== undefined) {
+            this.#swaggerDocument.servers.push({ url: `http://${host}:${http_port}` });
         }
     }
 

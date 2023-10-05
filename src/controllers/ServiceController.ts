@@ -88,7 +88,7 @@ export class ServiceController {
         }
     }
 
-    @Get("/category/{category_id}", "Obtain services per category")
+    @Get("/all/category/{category_id}", "Obtain services per category")
     @FromParam("category_id")
     async getAllByCategory(req: Request, res: Response, next: NextFunction) {
         try{

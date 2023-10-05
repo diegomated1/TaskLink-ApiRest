@@ -5,14 +5,14 @@ import { ServiceGet } from 'interfaces/queries/Services';
 import { QUERY_getOneService, QUERY_getServices } from './queries/User';
 
 export class ServiceModel {
-    
+
     constructor(
         private readonly client?: PoolClient
     ) { }
 
     getById = (id: number): Promise<ServiceGet | null> => {
         return new Promise(async (res, rej) => {
-            if(!this.client) throw new ServiceError("Error de conexion");
+            if (!this.client) throw new ServiceError("Error de conexion");
             try {
                 const query = QUERY_getOneService;
                 const values = [id];
@@ -24,12 +24,12 @@ export class ServiceModel {
             }
         });
     };
-    
+
     getAllByUser = (user_id: string): Promise<ServiceGet[]> => {
         return new Promise(async (res, rej) => {
-            if(!this.client) throw new ServiceError("Error de conexion");
+            if (!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query =  `SELECT s.id, s.price, s.calification, s.description, s.category_id, c.name AS category
+                const query = `SELECT s.id, s.price, s.calification, s.description, s.category_id, c.name AS category
                                 FROM dbo."Service" s
                                 INNER JOIN dbo."Category" c ON c.id = s.category_id 
                                 WHERE user_id = $1`;
@@ -43,11 +43,25 @@ export class ServiceModel {
         });
     };
 
+    getAll = (): Promise<ServiceGet[]> => {
+        return new Promise(async (res, rej) => {
+            if (!this.client) throw new ServiceError("Error de conexion");
+            try {
+                const query = QUERY_getServices;
+                const result = await this.client.query<ServiceGet>(query);
+                const user = result.rows;
+                res(user);
+            } catch (error) {
+                rej(error);
+            }
+        });
+    };
+
     getAllByCategory = (category_id: number): Promise<ServiceGet[]> => {
         return new Promise(async (res, rej) => {
-            if(!this.client) throw new ServiceError("Error de conexion");
+            if (!this.client) throw new ServiceError("Error de conexion");
             try {
-                const query =  `SELECT s.id, s.price, s.calification, s.description, s.category_id, c.name AS category
+                const query = `SELECT s.id, s.price, s.calification, s.description, s.category_id, c.name AS category
                                 FROM dbo."Service" s
                                 INNER JOIN dbo."Category" c ON c.id = s.category_id 
                                 WHERE category_id = $1`;
@@ -63,7 +77,7 @@ export class ServiceModel {
 
     insert = (user: Omit<Service, "id">): Promise<Service | null> => {
         return new Promise(async (res, rej) => {
-            if(!this.client) throw new ServiceError("Error de conexion");
+            if (!this.client) throw new ServiceError("Error de conexion");
             try {
                 const columns = Object.keys(user).join(', ');
                 const placeholders = Object.entries(user).map((_, i) => `$${i + 1}`).join(', ');
@@ -81,7 +95,7 @@ export class ServiceModel {
 
     update = (service_id: number, entity: Partial<Service>): Promise<Service | null> => {
         return new Promise(async (res, rej) => {
-            if(!this.client) throw new ServiceError("Error de conexion");
+            if (!this.client) throw new ServiceError("Error de conexion");
             try {
                 const updateClauses = Object.entries(entity)
                     .map(([key, value], i) => `"${key}" = $${i + 1}`)

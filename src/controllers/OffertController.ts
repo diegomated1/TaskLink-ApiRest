@@ -1,6 +1,6 @@
 import { AuthorizeAll, Controller, FromBody, FromParam, FromQuery, Get, Path, Post, Put } from "../router/router";
 import { Response, Request, NextFunction } from "express";
-import { OffertPostValidator, OffertPutValidator } from "../utils/validators/OffertValidator";
+import { LocationValidator, OffertPostValidator, OffertPutValidator } from "../utils/validators/OffertValidator";
 import { OffertService } from "../services/OffertService";
 
 
@@ -13,13 +13,13 @@ export class OffertController {
     ) { }
 
     @Post("", "Create an offer of a service")
-    @FromBody("Offert", OffertPostValidator) @FromBody("address")
+    @FromBody("Offert", OffertPostValidator) @FromBody("address", false) @FromBody("location", LocationValidator, false)
     async insert(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            const { Offert, address } = req.body;
+            const { Offert, address, location } = req.body;
 
-            const service = await this.offertService.insert(user_id, Offert, address);
+            const service = await this.offertService.insert(user_id, Offert, address, location);
 
             (service)
                 ? res.Ok(service)

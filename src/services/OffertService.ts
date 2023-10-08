@@ -7,6 +7,7 @@ import { HttpStatusCode } from "../router/RouterTypes";
 import { OffertStatusEnum } from "../interfaces/enums/OffertStatus";
 import { Google } from "../utils/services/googleService";
 import cron from "node-schedule";
+import { LatLng } from "interfaces/LatLng";
 
 export class OffertService {
 
@@ -15,13 +16,18 @@ export class OffertService {
     ) { }
 
     
-    insert = (user_id: string, offert: Partial<Offert>, address: string): Promise<Offert | null> => {
+    insert = (user_id: string, offert: Partial<Offert>, address?: string, location?: LatLng): Promise<Offert | null> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const serviceModel = new OffertModel(client);
             try {
-
-                const location = await Google.getLocationFromAdrress(address);
+                if(location){
+                    var _location: LatLng = location; 
+                }else{
+                    if(!address)
+                        throw new ServiceError("No se especificó el 'address' o el 'location'.");
+                    var _location = await Google.getLocationFromAdrress(address);
+                }
 
                 const new_service: Partial<Offert> = {
                     agended_date: offert.agended_date!,
@@ -30,7 +36,7 @@ export class OffertService {
                     service_id: offert.service_id!,
                     status_id: 1,
                     user_id,
-                    user_location: `(${location.lat}, ${location.lng})`
+                    user_location: `(${_location.lat}, ${_location.lng})`
                 }
 
                 const _offert = await serviceModel.insert(new_service);

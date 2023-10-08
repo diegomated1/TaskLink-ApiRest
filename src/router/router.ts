@@ -24,6 +24,7 @@ type ValidatorParameterType = {
     name: string
     from: Param
     validator: ObjectSchema
+    required: boolean
 }
 
 type Paramaters = { in: Param, name: string, required?: boolean, schemaName?: string, schema?: { "$ref": string } }
@@ -190,17 +191,18 @@ class RouterDesc {
         this.#middlewares.push(...middlewares)
     }
 
-    addParameters(from: Param, schemaName: string, schemeObject: ObjectSchema | string) {
+    addParameters(from: Param, schemaName: string, schemeObject: ObjectSchema | string, required: boolean = true) {
         const _schemeName = `${schemaName}${ui.time()}`;
         this.#routeParameters.push({
             in: from, name: schemaName,
             schemaName: schemaName ?? undefined,
-            schema: schemaName ? { $ref: `#/definitions/${_schemeName}` } : undefined
+            schema: schemaName ? { $ref: `#/definitions/${_schemeName}` } : undefined,
+            required
         });
         if (typeof schemeObject == "string") {
             this.#swaggerDocument.definitions[_schemeName] = { type: schemeObject }
         } else {
-            this.#validators.push({ name: schemaName, from, validator: schemeObject });
+            this.#validators.push({ name: schemaName, from, validator: schemeObject, required });
             const properties: ParameterDefinition = {};
             Object.entries(schemeObject.describe().keys).forEach(([k, v]) => {
                 properties[k] = { type: (v as any).type }
@@ -312,7 +314,8 @@ const validatorMiddleware = (validators: ValidatorParameterType[]) => {
                     case Param.query:
                         data = req.query[v.name]; break;
                 }
-                if (!data) throw new ServiceError(`No existe '${v.name}' en el '${v.from}'.`)
+                console.log(v.required);
+                if (!data && v.required) throw new ServiceError(`No existe '${v.name}' en el '${v.from}'.`)
                 return v.validator.validateAsync(data, { abortEarly: false });
             }));
             next();
@@ -373,35 +376,63 @@ export function Path(route?: string, description?: string) {
     };
 }
 
-export function FromQuery(schemaName: string): DecoratorFunctionMethod
-export function FromQuery(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod
-export function FromQuery(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod {
+export function FromQuery(schemaName: string): DecoratorFunctionMethod;
+export function FromQuery(schemaName: string, required?: boolean): DecoratorFunctionMethod;
+export function FromQuery(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
+export function FromQuery(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        _router.addParameters(Param.query, schemaName, schemeObject ?? "string");
+        if(!param2){
+            _router.addParameters(Param.query, param1, "string");
+        }else if(typeof param2 == "boolean"){
+            _router.addParameters(Param.query, param1, "string", param2);
+        }else{
+            _router.addParameters(Param.query, param1, param2 ?? "string", param3);
+        }
     };
 }
 
 export function FromBody(schemaName: string): DecoratorFunctionMethod;
-export function FromBody(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod
-export function FromBody(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod {
+export function FromBody(schemaName: string, required?: boolean): DecoratorFunctionMethod;
+export function FromBody(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
+export function FromBody(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        _router.addParameters(Param.body, schemaName, schemeObject ?? "string");
+        if(!param2){
+            _router.addParameters(Param.body, param1, "string");
+        }else if(typeof param2 == "boolean"){
+            _router.addParameters(Param.body, param1, "string", param2);
+        }else{
+            _router.addParameters(Param.body, param1, param2 ?? "string", param3);
+        }
     };
 }
 
-export function FromHeader(schemaName: string): DecoratorFunctionMethod
-export function FromHeader(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod
-export function FromHeader(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod {
+export function FromHeader(schemaName: string): DecoratorFunctionMethod;
+export function FromHeader(schemaName: string, required?: boolean): DecoratorFunctionMethod;
+export function FromHeader(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
+export function FromHeader(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        _router.addParameters(Param.header, schemaName, schemeObject ?? "string");
+        if(!param2){
+            _router.addParameters(Param.header, param1, "string");
+        }else if(typeof param2 == "boolean"){
+            _router.addParameters(Param.header, param1, "string", param2);
+        }else{
+            _router.addParameters(Param.header, param1, param2 ?? "string", param3);
+        }
     };
 }
 
 export function FromParam(schemaName: string): DecoratorFunctionMethod
-export function FromParam(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod
-export function FromParam(schemaName: string, schemeObject?: ObjectSchema | string): DecoratorFunctionMethod {
+export function FromParam(schemaName: string, required?: boolean): DecoratorFunctionMethod;
+export function FromParam(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
+export function FromParam(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        _router.addParameters(Param.param, schemaName, schemeObject ?? "string");
+        if(!param2){
+            _router.addParameters(Param.param, param1, "string");
+        }else if(typeof param2 == "boolean"){
+            _router.addParameters(Param.param, param1, "string", param2);
+        }else{
+            _router.addParameters(Param.param, param1, param2 ?? "string", param3);
+        }
     };
 }
 

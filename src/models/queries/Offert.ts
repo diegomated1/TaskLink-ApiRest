@@ -74,10 +74,12 @@ export const QUERY_offert_by_id = `
 select
     o.id, o.created_date, o.agended_date, o.price, o.user_location, o.user_provider_location,
     JSON_BUILD_OBJECT(
+        'id', s.id,
         'price', s.price,
         'calification', s.calification,
+        'description', s.description,
         'category', c.name,
-        'description', s.description
+        'category_id', c.id
     ) as service,
     JSON_BUILD_OBJECT(
         'id', u.id,
@@ -90,7 +92,8 @@ select
         'phone', u.phone,
         'birthdate', u.birthdate,
         'role_id', r.id,
-        'role', r.name
+        'role', r.name,
+        'available_days', u.available_days
     ) as user,
     JSON_BUILD_OBJECT(
         'id', up.id,
@@ -103,7 +106,8 @@ select
         'phone', up.phone,
         'birthdate', up.birthdate,
         'role_id', r.id,
-        'role', r.name
+        'role', r.name,
+        'available_days', up.available_days
     ) as user_provider_service
 FROM dbo."Offert" o
 INNER JOIN dbo."Service" s ON s.id = o.service_id

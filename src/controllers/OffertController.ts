@@ -13,13 +13,16 @@ export class OffertController {
     ) { }
 
     @Post("", "Create an offer of a service")
-    @FromBody("Offert", OffertPostValidator) @FromBody("address", false) @FromBody("location", LocationValidator, false)
+    @FromBody("Offert", OffertPostValidator) 
+    @FromBody("address", false) 
+    @FromBody("location", LocationValidator, false)
+    @FromBody("provider_location", LocationValidator, false)
     async insert(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
-            const { Offert, address, location } = req.body;
+            const { Offert, address, location, provider_location } = req.body;
 
-            const service = await this.offertService.insert(user_id, Offert, address, location);
+            const service = await this.offertService.insert(user_id, Offert, address, location, provider_location);
 
             (service)
                 ? res.Ok(service)

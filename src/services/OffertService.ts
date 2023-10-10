@@ -16,7 +16,13 @@ export class OffertService {
     ) { }
 
     
-    insert = (user_id: string, offert: Partial<Offert>, address?: string, location?: LatLng): Promise<Offert | null> => {
+    insert = (
+        user_id: string,
+        offert: Partial<Offert>,
+        address?: string,
+        location?: LatLng,
+        provider_location?: LatLng,
+    ): Promise<Offert | null> => {
         return new Promise(async (res, rej) => {
             const client = await this.conection.connect();
             const serviceModel = new OffertModel(client);
@@ -36,7 +42,11 @@ export class OffertService {
                     service_id: offert.service_id!,
                     status_id: 1,
                     user_id,
-                    user_location: `(${_location.lat}, ${_location.lng})`
+                    user_location: `(${_location.lat}, ${_location.lng})`,
+                }
+
+                if(provider_location){
+                    new_service.user_provider_location = `(${provider_location.lat}, ${provider_location.lng})`
                 }
 
                 const _offert = await serviceModel.insert(new_service);

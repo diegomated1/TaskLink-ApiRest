@@ -32,6 +32,25 @@ export class OffertController {
         }
     }
 
+    @Get("/my-offerts", "Get all the offers that have requested me")
+    @FromQuery("page", false) @FromQuery("rows", false) @FromQuery("status_id", false) @FromQuery("price", false)
+    async getMyOfferts(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = res.locals;
+            let { page, rows, status_id, price } = req.query;
+            const _page = page ? parseInt(page.toString()) : undefined;
+            const _rows = rows ? parseInt(rows.toString()) : undefined;
+            const _status_id = status_id ? parseInt(status_id.toString()) : undefined;
+            const _price = price ? price.toString() : undefined;
+            
+            const aggendedOfferts = await this.offertService.getMyOfferts(user_id, _page, _rows, _status_id, _price);
+
+            res.Ok(aggendedOfferts);
+        } catch (error) {
+            next(error);
+        }
+    };
+
     @Get("/{offert_id}", "Get an offer by ID")
     @FromParam("offert_id")
     async getOffertById(req: Request, res: Response, next: NextFunction) {
@@ -50,7 +69,7 @@ export class OffertController {
     };
 
     @Get("", "Get all the offers made by me")
-    @FromQuery("page") @FromQuery("rows") @FromQuery("status_id") @FromQuery("price")
+    @FromQuery("page", false) @FromQuery("rows", false) @FromQuery("status_id", false) @FromQuery("price", false)
     async getOfferts(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id } = res.locals;
@@ -61,25 +80,6 @@ export class OffertController {
             const _price = price ? price.toString() : undefined;
             
             const aggendedOfferts = await this.offertService.getOfferts(user_id, _page, _rows, _status_id, _price);
-
-            res.Ok(aggendedOfferts);
-        } catch (error) {
-            next(error);
-        }
-    };
-
-    @Get("/my-offerts", "Get all the offers that have requested me")
-    @FromQuery("page") @FromQuery("rows") @FromQuery("status_id") @FromQuery("price")
-    async getMyOfferts(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { user_id } = res.locals;
-            let { page, rows, status_id, price } = req.query;
-            const _page = page ? parseInt(page.toString()) : undefined;
-            const _rows = rows ? parseInt(rows.toString()) : undefined;
-            const _status_id = status_id ? parseInt(status_id.toString()) : undefined;
-            const _price = price ? price.toString() : undefined;
-            
-            const aggendedOfferts = await this.offertService.getMyOfferts(user_id, _page, _rows, _status_id, _price);
 
             res.Ok(aggendedOfferts);
         } catch (error) {

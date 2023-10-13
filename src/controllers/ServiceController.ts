@@ -32,8 +32,21 @@ export class ServiceController {
     @Get("/all", "Get all services")
     async getAll(req: Request, res: Response, next: NextFunction) {
         try{
-            
+
             const services = await this.serviceService.getAll();
+
+            res.Ok(services);
+        }catch(error){
+            next(error);
+        }
+    }
+
+    @Get("/token", "Get all my services")
+    async getAllToken(req: Request, res: Response, next: NextFunction) {
+        try{
+            const { user_id } = res.locals;
+
+            const services = await this.serviceService.getAllByUser(user_id);
 
             res.Ok(services);
         }catch(error){

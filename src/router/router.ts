@@ -314,7 +314,6 @@ const validatorMiddleware = (validators: ValidatorParameterType[]) => {
                     case Param.query:
                         data = req.query[v.name]; break;
                 }
-                console.log(v.required);
                 if (!data && v.required) throw new ServiceError(`No existe '${v.name}' en el '${v.from}'.`)
                 return v.validator.validateAsync(data, { abortEarly: false });
             }));
@@ -381,7 +380,7 @@ export function FromQuery(schemaName: string, required?: boolean): DecoratorFunc
 export function FromQuery(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
 export function FromQuery(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        if(!param2){
+        if(param2 == undefined || param2 == null){
             _router.addParameters(Param.query, param1, "string");
         }else if(typeof param2 == "boolean"){
             _router.addParameters(Param.query, param1, "string", param2);
@@ -396,7 +395,7 @@ export function FromBody(schemaName: string, required?: boolean): DecoratorFunct
 export function FromBody(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
 export function FromBody(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        if(!param2){
+        if(param2 == undefined || param2 == null){
             _router.addParameters(Param.body, param1, "string");
         }else if(typeof param2 == "boolean"){
             _router.addParameters(Param.body, param1, "string", param2);
@@ -411,7 +410,7 @@ export function FromHeader(schemaName: string, required?: boolean): DecoratorFun
 export function FromHeader(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
 export function FromHeader(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        if(!param2){
+        if(param2 == undefined || param2 == null){
             _router.addParameters(Param.header, param1, "string");
         }else if(typeof param2 == "boolean"){
             _router.addParameters(Param.header, param1, "string", param2);
@@ -426,7 +425,7 @@ export function FromParam(schemaName: string, required?: boolean): DecoratorFunc
 export function FromParam(schemaName: string, schemeObject?: ObjectSchema | string, required?: boolean): DecoratorFunctionMethod;
 export function FromParam(param1: string, param2?: ObjectSchema | string | boolean, param3?: boolean): DecoratorFunctionMethod {
     return function (target: any, propertyKey: string) {
-        if(!param2){
+        if(param2 == undefined || param2 == null){
             _router.addParameters(Param.param, param1, "string");
         }else if(typeof param2 == "boolean"){
             _router.addParameters(Param.param, param1, "string", param2);

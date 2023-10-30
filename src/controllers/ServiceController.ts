@@ -40,6 +40,22 @@ export class ServiceController {
             next(error);
         }
     }
+    
+    @Get("/user/{user_id}", "Get all services per user")
+    @FromParam("user_id")
+    async getAllByUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user_id } = req.params;
+
+            const service = await this.serviceService.getAllByUser(user_id);
+
+            (service)
+                ? res.Ok(service)
+                : res.Failed("No se pudo crear el servicio.")
+        } catch (error) {
+            next(error);
+        }
+    }
 
     @Get("/token", "Get all my services")
     async getAllToken(req: Request, res: Response, next: NextFunction) {
@@ -64,21 +80,6 @@ export class ServiceController {
 
             res.Ok(services);
         }catch(error){
-            next(error);
-        }
-    }
-
-    @Get("", "Get all services per user")
-    async getAllByUser(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { user_id } = res.locals;
-
-            const service = await this.serviceService.getAllByUser(user_id);
-
-            (service)
-                ? res.Ok(service)
-                : res.Failed("No se pudo crear el servicio.")
-        } catch (error) {
             next(error);
         }
     }

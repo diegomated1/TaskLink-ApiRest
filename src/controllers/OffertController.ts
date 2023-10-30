@@ -43,7 +43,7 @@ export class OffertController {
             const _status_id = status_id ? parseInt(status_id.toString()) : undefined;
             const _price = price ? price.toString() : undefined;
             
-            const aggendedOfferts = await this.offertService.getMyOfferts(user_id, _page, _rows, _status_id, _price);
+            const aggendedOfferts = await this.offertService.getOfferts(user_id, _page, _rows, _status_id, _price);
 
             res.Ok(aggendedOfferts);
         } catch (error) {
@@ -79,7 +79,7 @@ export class OffertController {
             const _status_id = status_id ? parseInt(status_id.toString()) : undefined;
             const _price = price ? price.toString() : undefined;
             
-            const aggendedOfferts = await this.offertService.getOfferts(user_id, _page, _rows, _status_id, _price);
+            const aggendedOfferts = await this.offertService.getMyOfferts(user_id, _page, _rows, _status_id, _price);
 
             res.Ok(aggendedOfferts);
         } catch (error) {

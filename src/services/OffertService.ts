@@ -173,7 +173,7 @@ export class OffertService {
             const offertModel = new OffertModel(client);
             try {
 
-                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+                const offertCheck = await offertModel.getById(offert_id);
 
                 if (!offertCheck)
                     throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
@@ -205,7 +205,7 @@ export class OffertService {
             const offertModel = new OffertModel(client);
             try {
                 
-                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+                const offertCheck = await offertModel.getById(offert_id);
 
                 if (!offertCheck)
                     throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
@@ -235,7 +235,7 @@ export class OffertService {
             const offertModel = new OffertModel(client);
             try {
 
-                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+                const offertCheck = await offertModel.getById(offert_id);
 
                 if (!offertCheck)
                     throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
@@ -262,7 +262,7 @@ export class OffertService {
             const offertModel = new OffertModel(client);
             try {
 
-                const offertCheck = await offertModel.getByIdByServiceProvider(offert_id, user_id);
+                const offertCheck = await offertModel.getById(offert_id);
 
                 if (!offertCheck)
                     throw new ServiceError("Oferta no encontrada.", HttpStatusCode.NOT_FOUND);
